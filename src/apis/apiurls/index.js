@@ -1,0 +1,8 @@
+export const GIE_SEND_OTP = process.env.REACT_APP_ENDPOINT + 'gie/send-otp'
+export const GIE_USER_LOGIN = process.env.REACT_APP_ENDPOINT + 'gie/login'
+export const AGENCY_SEND_OTP = process.env.REACT_APP_ENDPOINT + 'agency/send-otp'
+export const AGENCY_USER_LOGIN = process.env.REACT_APP_ENDPOINT + 'agency/login'
+export const GIES_AGENCY = process.env.REACT_APP_ENDPOINT + 'agency/all/'
+export const ADD_AGENCY = process.env.REACT_APP_ENDPOINT + 'agency/create'
+export const DELETE_AGENCY = process.env.REACT_APP_ENDPOINT + 'agency/del/'
+export const UPDATE_AGENCY = process.env.REACT_APP_ENDPOINT + 'agency/update/'

@@ -1,8 +1,8 @@
 import axios from "axios";
-import config from "Api/config/config";
-import { setisLoggedIn } from "ReduxSlices/AdminSlice";
-import store from "ReduxSlices/Store";
 import { Redirect } from "react-router-dom";
+import config from "apis/config/config";
+import { setisLoggedin } from "utils/ReduxSlices/LoginSlice";
+import store from "utils/ReduxSlices/store";
 
 const createAxiosInstance = (baseURL) => {
   const axiosInstance = axios.create({
@@ -93,7 +93,7 @@ const createAxiosInstance = (baseURL) => {
           return Promise.reject(error);
         } catch (refreshError) {
           processQueue(refreshError, null);
-          store.dispatch(setisLoggedIn(false));
+          store.dispatch(setisLoggedin(false));
           localStorage.clear();
           return <Redirect to={"/auth/login"} />;
         } finally {

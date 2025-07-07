@@ -1,9 +1,11 @@
 import React from "react";
 import { createPopper } from "@popperjs/core";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const UserDropdown = () => {
   // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
+  const history = useHistory()
   const btnDropdownRef = React.createRef();
   const popoverDropdownRef = React.createRef();
   const openDropdownPopover = () => {
@@ -15,6 +17,11 @@ const UserDropdown = () => {
   const closeDropdownPopover = () => {
     setDropdownPopoverShow(false);
   };
+  const handleLogOut=(e)=>{
+    e.preventDefault()
+    localStorage.clear()
+    history.replace('/auth/login')
+  }
   return (
     <>
       <a
@@ -27,12 +34,8 @@ const UserDropdown = () => {
         }}
       >
         <div className="items-center flex">
-          <span className="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full">
-            <img
-              alt="..."
-              className="w-full rounded-full align-middle border-none shadow-lg"
-              src={require("assets/img/team-1-800x800.jpg").default}
-            />
+          <span className="w-12 h-12 text-xl text-white bg-blueGray-600 inline-flex items-center justify-center rounded-full">
+            <i class="fas fa-user"></i>
           </span>
         </div>
       </a>
@@ -44,11 +47,10 @@ const UserDropdown = () => {
         }
       >
         <a
-          href="#pablo"
           className={
             "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
           }
-          onClick={(e) => e.preventDefault()}
+          onClick={(e) => handleLogOut(e)}
         >
           LogOut
         </a>
