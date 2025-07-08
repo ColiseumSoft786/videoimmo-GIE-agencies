@@ -25,16 +25,18 @@ import { setisLoggedin } from "utils/ReduxSlices/LoginSlice";
 import { setisgie } from "utils/ReduxSlices/LoginSlice";
 import { setisagency } from "utils/ReduxSlices/LoginSlice";
 import Agencies from "views/admin/Agencies";
+import Teams from "views/admin/Teams";
 
 const App = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation();
   const isLoggedIn = useSelector((state) => state.login.isloggedin);
+  const isGie = useSelector((state)=>state.login.isGie)
+  const isAgency = useSelector((state)=>state.login.isAgency)
   const syncUserTypeFromLocalStorage = () => {
   const gieName = localStorage.getItem("giename");
   const agencyName = localStorage.getItem("agencyname");
-
   if (gieName) {
     dispatch(setisgie(true));
     dispatch(setisagency(false));
@@ -72,7 +74,8 @@ const App = () => {
         <Route path="/tables" exact render={() => <Admin children={<Tables />} />} />
         <Route path="/maps" exact render={() => <Admin children={<Maps />} />} />
         <Route path="/users" exact render={() => <Admin children={<Users />} />} />
-        <Route path="/agencies" exact render={() => <Admin children={<Agencies />} />} />
+        {isGie&&<Route path="/agencies" exact render={() => <Admin children={<Agencies />} />} />}
+        {isAgency&&<Route path="/teams" exact render={() => <Admin children={<Teams />} />} />}
 
         {/* Public and Auth pages */}
         <Route path="/auth" component={Auth} />

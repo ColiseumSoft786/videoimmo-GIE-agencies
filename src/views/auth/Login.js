@@ -70,6 +70,7 @@ export default function Login() {
       if (!response.error) {
         localStorage.setItem("agencyname", response.data.agency.name);
         localStorage.setItem("agency_id", response.data.agency._id);
+        localStorage.setItem("parent_gie",response.data.agency.gie)
         localStorage.setItem("access_token", response.data.token);
         dispatch(setisLoggedin(true));
         localStorage.setItem("isLoggedIn", true);

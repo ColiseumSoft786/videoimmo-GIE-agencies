@@ -7,43 +7,55 @@ import { deleteAgency } from "apis/agency";
 import toastService from "utils/Toaster/toaster";
 import EditAgencyModal from "views/Modals/EditAgencyModal";
 import ViewAgencyModal from "views/Modals/ViewAgencyModal";
-const Agencies = () => {
+import { useSelector } from "react-redux";
+import { getAllUserByGieId } from "apis/users";
+import { getAllUsersByAgencyId } from "apis/users";
+import AddUserModal from "views/Modals/AddUserModal";
+import { deleteUser } from "apis/users";
+import EditUserModal from "views/Modals/EditUserModal";
+import ViewUserModal from "views/Modals/ViewUserModal";
+import { getAllTeams } from "apis/teams";
+const Teams = () => {
   const color = "light";
-  const [isadding, setisadding] = useState(false);
+  const isGie = useSelector((state) => state.login.isGie);
+  const isAgency = useSelector((state) => state.login.isAgency);
+  const gieId = isGie
+    ? localStorage.getItem("gie_id")
+    : localStorage.getItem("parent_gie");
+  const agencyId = isAgency ? localStorage.getItem("agency_id") : "";
   const [isloading, setisloading] = useState(true);
-  const [allAgencies, setAllAgencies] = useState([]);
-  const [agencytoview,setagencytoview] = useState(null)
-  const [isediting, setisediting] = useState(false);
+  const [allTeams, setAllTeams] = useState([]);
+  const [isediting, setisEditing] = useState(false);
+  const [isadding, setisadding] = useState(false);
   const [isviewing, setisviewing] = useState(false);
-  const GieId = localStorage.getItem("gie_id");
-  console.log(GieId);
-  const handleGetAllAgencies = async () => {
-    setisloading(true);
-    if (GieId) {
-      console.log("this gie id going for agencies", GieId);
-      const response = await getAllAgencies(GieId);
-      if (!response.error) {
-        setAllAgencies(response.data);
-        setisloading(false);
+  const [teamtoview, setteamtoview] = useState(null);
+  const handleGetAllteams = async () => {
+    try {
+      const response = await getAllTeams(agencyId)
+      if(!response.error){
+        setAllTeams(response.data)
+        setisloading(false)
       }
+    } catch (error) {
+        console.log('error in fetching teams',error)
     }
   };
   useEffect(() => {
-    handleGetAllAgencies();
+    handleGetAllteams();
   }, []);
-  const handleeditclick = async (agency) => {
-    setagencytoview(agency)
-    setisediting(true);
+  const handleeditclick = (team) => {
+    setisEditing(true);
+    setteamtoview(team);
   };
-  const handleviewclick = async(agency) => {
-    setagencytoview(agency)
+  const handleviewclick = (team) => {
     setisviewing(true);
+    setteamtoview(team);
   };
   const handledeleteclick = async(id) => {
-    const response = await deleteAgency(id)
+    const response = await deleteUser(id)
     if(!response.error){
-      toastService.success("Agency Deleted Successfully")
-      handleGetAllAgencies()
+      toastService.success('Team Deleted Successfully')
+      handleGetAllteams()
     }
   };
   return (
@@ -65,14 +77,22 @@ const Agencies = () => {
                       (color === "light" ? "text-blueGray-700" : "text-white")
                     }
                   >
-                    Agencies
+                    Users
                   </h3>
-                  <button
-                    className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                    onClick={() => setisadding(true)}
+                  <div
+                    style={{
+                      width: "40%",
+                      display: "flex",
+                      justifyContent: "end",
+                    }}
                   >
-                    Add Agency
-                  </button>
+                      <button
+                        className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                        onClick={() => setisadding(true)}
+                      >
+                        Add Team
+                      </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -107,16 +127,6 @@ const Agencies = () => {
                             : "bg-lightBlue-800 text-lightBlue-300 border-lightBlue-700")
                         }
                       >
-                        Image
-                      </th>
-                      <th
-                        className={
-                          "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " +
-                          (color === "light"
-                            ? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
-                            : "bg-lightBlue-800 text-lightBlue-300 border-lightBlue-700")
-                        }
-                      >
                         Name
                       </th>
                       <th
@@ -127,7 +137,17 @@ const Agencies = () => {
                             : "bg-lightBlue-800 text-lightBlue-300 border-lightBlue-700")
                         }
                       >
-                        Mobile #
+                        Managers
+                      </th>
+                      <th
+                        className={
+                          "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " +
+                          (color === "light"
+                            ? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                            : "bg-lightBlue-800 text-lightBlue-300 border-lightBlue-700")
+                        }
+                      >
+                        Status
                       </th>
                       <th
                         className={
@@ -143,46 +163,35 @@ const Agencies = () => {
                   </thead>
 
                   <tbody>
-                    {allAgencies.map((agency, index) => {
+                    {allTeams.map((team, index) => {
                       return (
                         <tr key={index}>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                             {index + 1}
                           </td>
-                          <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
-                            {agency.image.trim() === "" ? (
-                              <div>
-                                <span
-                                  style={{ height: "25px", width: "25px" }}
-                                  className=" text-sm text-white bg-blueGray-600 inline-flex items-center justify-center rounded-full"
-                                >
-                                  <i class="fas fa-user"></i>
-                                </span>
-                              </div>
-                            ) : (
-                              <img
-                                src={`https://api.videorpi.com/${agency.image}`}
-                                style={{ height: "25px", width: "25px" }}
-                                className=" bg-white rounded-full border"
-                                alt="..."
-                              ></img>
-                            )}
-                          </th>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                            {agency.name}
+                            {team.name}
                           </td>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                            {agency.countryCode}-{agency.phone}
+                            {team.managers.map((manager,index)=>{
+                      return(
+                        <span>({manager.fname})</span>
+                      )
+                    })}
                           </td>
-
+                          <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                            <i style={{fontSize:'20px',color:team.status==='1'?'green':'red'}} className={`${team.status==='1'?'fas fa-check':'fas fa-xmark'}`}/>
+                          </td>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-right">
                             <TableDropdown
                               isedit={true}
                               isview={true}
                               isdelete={true}
-                              handleedit={()=>handleeditclick(agency)}
-                              handleview={()=>handleviewclick(agency)}
-                              handledelete={()=>handledeleteclick(agency._id)}
+                              handleedit={() => handleeditclick(user.user)}
+                              handleview={() => handleviewclick(user.user)}
+                              handledelete={() =>
+                                handledeleteclick(user.user._id)
+                              }
                             />
                           </td>
                         </tr>
@@ -195,7 +204,7 @@ const Agencies = () => {
           </div>
         </div>
       </div>
-      {(isadding||isediting||isviewing) && (
+      {(isadding || isediting || isviewing) && (
         <div
           style={{
             height: "100vh",
@@ -210,30 +219,11 @@ const Agencies = () => {
             zIndex: 51,
           }}
         >
-          {isadding && (
-            <AddAgencyModal
-              handleClose={() => setisadding(false)}
-              GieId={GieId}
-              handlefetch={handleGetAllAgencies}
-            />
-          )}
-          {isediting && (
-            <EditAgencyModal
-            handleClose={()=>setisediting(false)}
-            agencytoview={agencytoview} 
-            handlefetch={handleGetAllAgencies}
-            />
-          )}
-          {isviewing && (
-            <ViewAgencyModal
-            handleClose={()=>setisviewing(false)}
-            agencytoview={agencytoview}
-            />
-          )}
+          
         </div>
       )}
     </>
   );
 };
 
-export default Agencies;
+export default Teams;

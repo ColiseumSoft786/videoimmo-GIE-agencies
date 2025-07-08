@@ -4,10 +4,11 @@ import React, { useState } from 'react'
 import PhoneInput from 'react-phone-input-2'
 import toastService from 'utils/Toaster/toaster'
 
-const ViewAgencyModal = ({handleClose , agencytoview}) => {
-    const [mobileno,setmobileno] = useState(`${agencytoview.countryCode}${agencytoview.phone}`)
-    const [countryCode,setCountryCode] = useState(agencytoview.countryCode)
-    const [name,setname]= useState(agencytoview.name)
+const ViewUserModal = ({handleClose , Usertoview}) => {
+    const [useremail, setuseremail] = useState(Usertoview.email);
+        const [mobileno,setmobileno] = useState(Usertoview.country_Code+Usertoview.mobile_no)
+        const [countryCode,setCountryCode] = useState(Usertoview.country_Code)
+        const [name,setname]= useState(Usertoview.fname)
   return (
     <div>
         <div className="flex content-center items-center justify-center h-full">
@@ -16,7 +17,7 @@ const ViewAgencyModal = ({handleClose , agencytoview}) => {
                       <div className="rounded-t mb-0 px-6 py-6">
                         <div className="text-center mb-3">
                           <h6 className="text-blueGray-500 text-sm font-bold">
-                            View Agency
+                            View User
                           </h6>
                         </div>
                         <hr className="mt-6 border-b-1 border-blueGray-300" />
@@ -27,14 +28,13 @@ const ViewAgencyModal = ({handleClose , agencytoview}) => {
                             <div>      
                             <div className="relative w-full mb-3">
                               <label className="block uppercase text-blueGray-600 text-xs font-bold mb-2">
-                                Name
+                                Email
                               </label>
                               <input
                                 type="text"
                                 className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                 placeholder="Enter Agency Name"
-                                value={name}
-                                onChange={(e)=>setname(e.target.value)}
+                                value={useremail}
                                 readOnly
                               />
                             </div>
@@ -56,17 +56,18 @@ const ViewAgencyModal = ({handleClose , agencytoview}) => {
                               />
                             </div>
                             </div>
-                            <div className='h-full w-[30%] content-center items-center'>
-                              {agencytoview.image.trim()===''?(<span
+                            <div className='h-full w-[30%] content-center items-center flex flex-col'>
+                              {Usertoview.image.trim()===''?(<span
                                   style={{ height: "10vw", width: "10vw",fontSize:'6vw' }}
                                   className="text-white bg-blueGray-600 inline-flex items-center justify-center rounded-full"
                                 >
                                   <i class="fas fa-user"></i>
                                 </span>):(
                                   <div className='overflow-hidden' style={{border:'1px solid black',height:'10vw',width:'10vw',borderRadius:'50%'}}>
-                                <img alt={name} src={`https://api.videorpi.com/${agencytoview.image}`} className='h-full w-full'/>
+                                <img alt={name} src={`https://api.videorpi.com/${Usertoview.image}`} className='h-full w-full'/>
                               </div>
                                 )}
+                            <span>{name}</span>
                             </div>
                             </div>
                           <div className="text-center mt-6">
@@ -86,4 +87,4 @@ const ViewAgencyModal = ({handleClose , agencytoview}) => {
   )
 }
 
-export default ViewAgencyModal
+export default ViewUserModal

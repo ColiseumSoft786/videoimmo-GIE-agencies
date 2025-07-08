@@ -4,8 +4,11 @@ import { Link } from "react-router-dom";
 
 import NotificationDropdown from "components/Dropdowns/NotificationDropdown.js";
 import UserDropdown from "components/Dropdowns/UserDropdown.js";
+import { useSelector } from "react-redux";
 export default function Sidebar() {
   const [collapseShow, setCollapseShow] = React.useState("hidden");
+  const isGie = useSelector((state)=>state.login.isGie)
+  const isAgency = useSelector((state)=>state.login.isAgency)
   return (
     <>
       <nav className="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-nowrap md:overflow-hidden shadow-xl bg-white flex flex-wrap items-center justify-between relative md:w-64 z-10 py-4 px-6">
@@ -141,7 +144,7 @@ export default function Sidebar() {
                 >
                   <i
                     className={
-                      "fas fa-users mr-2 text-sm " +
+                      "fas fa-user mr-2 text-sm " +
                       (window.location.href.indexOf("/users") !== -1
                         ? "opacity-75"
                         : "text-blueGray-300")
@@ -151,6 +154,27 @@ export default function Sidebar() {
                 </Link>
               </li>
               <li className="items-center">
+                <Link
+                  className={
+                    "text-xs uppercase py-3 font-bold block " +
+                    (window.location.href.indexOf("/teams") !== -1
+                      ? "text-lightBlue-500 hover:text-lightBlue-600"
+                      : "text-blueGray-700 hover:text-blueGray-500")
+                  }
+                  to="/teams"
+                >
+                  <i
+                    className={
+                      "fas fa-users mr-2 text-sm " +
+                      (window.location.href.indexOf("/teams") !== -1
+                        ? "opacity-75"
+                        : "text-blueGray-300")
+                    }
+                  ></i>{" "}
+                  Teams
+                </Link>
+              </li>
+              {isGie&&!isAgency&&<li className="items-center">
                 <Link
                   className={
                     "text-xs uppercase py-3 font-bold block " +
@@ -170,7 +194,7 @@ export default function Sidebar() {
                   ></i>{" "}
                   Agencies
                 </Link>
-              </li>
+              </li>}
               <li className="items-center">
                 <Link
                   className={
