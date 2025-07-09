@@ -2,6 +2,8 @@ import { deleteAPI } from "apis"
 import { putAPI } from "apis"
 import { postAPI } from "apis"
 import { getAPI } from "apis"
+import { GET_OTHER_USERS_NAMES } from "apis/apiurls"
+import { GET_ALL_USERS_NAMES_BY_AGENCY } from "apis/apiurls"
 import { EDIT_USER_BY_AGENCY } from "apis/apiurls"
 import { DELETE_USER_BY_AGENCY } from "apis/apiurls"
 import { ADD_USER_BY_AGENCY } from "apis/apiurls"
@@ -55,5 +57,25 @@ export const updateUser = async(body,id)=>{
         return response
     } catch (error) {
         console.log('error in update user',error)
+    }
+}
+export const getAllUsersNamesByAgency = async(id)=>{
+    try {
+        const path = GET_ALL_USERS_NAMES_BY_AGENCY + id
+        const response = await getAPI(path,true)
+        console.log('response from get all users names by agency',response)
+        return response
+    } catch (error) {
+        console.log('error in get all user names by agency',error)
+    }
+}
+export const getOtherUserNames = async(id,agency)=>{
+    try {
+        const path = GET_OTHER_USERS_NAMES+id+`/${agency}`
+        const response = await getAPI(path,true)
+        console.log('response from get other user names ',response)
+        return response
+    } catch (error) {
+        console.log('error in get other user name ',error)
     }
 }

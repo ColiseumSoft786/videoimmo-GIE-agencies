@@ -26,6 +26,8 @@ import { setisgie } from "utils/ReduxSlices/LoginSlice";
 import { setisagency } from "utils/ReduxSlices/LoginSlice";
 import Agencies from "views/admin/Agencies";
 import Teams from "views/admin/Teams";
+import EditTeamModal from "views/Modals/EditTeamModal";
+import House from "views/admin/House";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -76,7 +78,9 @@ const App = () => {
         <Route path="/users" exact render={() => <Admin children={<Users />} />} />
         {isGie&&<Route path="/agencies" exact render={() => <Admin children={<Agencies />} />} />}
         {isAgency&&<Route path="/teams" exact render={() => <Admin children={<Teams />} />} />}
-
+        {isAgency&&<Route path='/teams/:id' exact render={()=><Admin children={<EditTeamModal/>}/>}></Route>}
+        {isAgency&&<Route path='/houses/:userid/:username' exact render={()=><Admin children={<House/>}/>}></Route>}
+        {isAgency&&<Route path='/houses' exact render={()=><Admin children={<House/>}/>}></Route>}
         {/* Public and Auth pages */}
         <Route path="/auth" component={Auth} />
         <Route path="/landing" exact component={Landing} />

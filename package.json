@@ -15,6 +15,7 @@
     "gulp": "4.0.2",
     "gulp-append-prepend": "1.0.8",
     "postcss": "8.4.39",
+    "qrcode.react": "^4.2.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-phone-input-2": "^2.15.1",

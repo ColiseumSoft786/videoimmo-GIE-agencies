@@ -14,14 +14,14 @@ import AddUserModal from "views/Modals/AddUserModal";
 import { deleteUser } from "apis/users";
 import EditUserModal from "views/Modals/EditUserModal";
 import ViewUserModal from "views/Modals/ViewUserModal";
-import { getAllTeams } from "apis/teams";
-import AddTeamModal from "views/Modals/AddTeamModal";
-import EditTeamModal from "views/Modals/EditTeamModal";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { deleteTeamByAgency } from "apis/teams";
-const Teams = () => {
+import { useParams } from "react-router-dom/cjs/react-router-dom.min";
+import { getAllUserHouses } from "apis/houses";
+import { getAllHousesByAgency } from "apis/houses";
+import { deleteHouseByAgency } from "apis/houses";
+import ViewHouseModal from "views/Modals/ViewHouseModal";
+const House = () => {
   const color = "light";
-  const history = useHistory()
+  const { userid, username } = useParams();
   const isGie = useSelector((state) => state.login.isGie);
   const isAgency = useSelector((state) => state.login.isAgency);
   const gieId = isGie
@@ -29,40 +29,42 @@ const Teams = () => {
     : localStorage.getItem("parent_gie");
   const agencyId = isAgency ? localStorage.getItem("agency_id") : "";
   const [isloading, setisloading] = useState(true);
-  const [allTeams, setAllTeams] = useState([]);
-  const [isediting, setisEditing] = useState(false);
-  const [isadding, setisadding] = useState(false);
+  const [allHouses, setAllHouses] = useState([]);
   const [isviewing, setisviewing] = useState(false);
-  const [teamtoview, setteamtoview] = useState(null);
-  const handleGetAllteams = async () => {
+  const [housetoview, sethousetoview] = useState(null);
+  const handleGetAllHouses = async () => {
     try {
-      setisloading(true)
-      const response = await getAllTeams(agencyId)
-      if(!response.error){
-        setAllTeams(response.data)
-        setisloading(false)
+      let response = {};
+      setisloading(true);
+      if (window.location.pathname==='/houses') {
+        response = await getAllHousesByAgency(agencyId);
+      } else {
+        response = await getAllUserHouses(userid);
+      }
+      if (!response.error) {
+        setAllHouses(response.data);
+        setisloading(false);
       }
     } catch (error) {
-        console.log('error in fetching teams',error)
+      console.log("error in fetching houses", error);
     }
   };
   useEffect(() => {
-    handleGetAllteams();
+    handleGetAllHouses();
   }, []);
-  const handleeditclick = (team) => {
-    setisEditing(true);
-    setteamtoview(team);
-  };
-  const handleviewclick = (team) => {
-    setisviewing(true);
-    setteamtoview(team);
-  };
-  const handledeleteclick = async(id) => {
-    const response = await deleteTeamByAgency(id)
-    if(!response.error){
-      toastService.success('Team Deleted Successfully')
-      handleGetAllteams()
+  const handledeleteclick = async (id) => {
+    const response = await deleteHouseByAgency(id);
+    if (!response.error) {
+      toastService.success("House Deleted Successfully");
+      handleGetAllHouses();
     }
+  };
+  const getHouseTimestamp = (createdAt) => {
+    return new Date(createdAt).getTime(); // or .valueOf()
+  };
+  const handleViewClick = (house) => {
+    sethousetoview(house);
+    setisviewing(true);
   };
   return (
     <>
@@ -83,22 +85,15 @@ const Teams = () => {
                       (color === "light" ? "text-blueGray-700" : "text-white")
                     }
                   >
-                    Teams
+                    {window.location.pathname==='/houses' ? "Houses" : `Houses of ${username}`}
                   </h3>
                   <div
                     style={{
                       width: "40%",
                       display: "flex",
-                      justifyContent: "end",
+                      justifyContent: isGie ? "space-between" : "end",
                     }}
-                  >
-                      <button
-                        className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                        onClick={() => setisadding(true)}
-                      >
-                        Add Team
-                      </button>
-                  </div>
+                  ></div>
                 </div>
               </div>
             </div>
@@ -133,7 +128,7 @@ const Teams = () => {
                             : "bg-lightBlue-800 text-lightBlue-300 border-lightBlue-700")
                         }
                       >
-                        Name
+                        Thumbnail
                       </th>
                       <th
                         className={
@@ -143,7 +138,37 @@ const Teams = () => {
                             : "bg-lightBlue-800 text-lightBlue-300 border-lightBlue-700")
                         }
                       >
-                        Managers
+                        Type
+                      </th>
+                      <th
+                        className={
+                          "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " +
+                          (color === "light"
+                            ? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                            : "bg-lightBlue-800 text-lightBlue-300 border-lightBlue-700")
+                        }
+                      >
+                        House Type
+                      </th>
+                      <th
+                        className={
+                          "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " +
+                          (color === "light"
+                            ? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                            : "bg-lightBlue-800 text-lightBlue-300 border-lightBlue-700")
+                        }
+                      >
+                        User Name
+                      </th>
+                      <th
+                        className={
+                          "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " +
+                          (color === "light"
+                            ? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                            : "bg-lightBlue-800 text-lightBlue-300 border-lightBlue-700")
+                        }
+                      >
+                        View House
                       </th>
                       <th
                         className={
@@ -169,35 +194,73 @@ const Teams = () => {
                   </thead>
 
                   <tbody>
-                    {allTeams.map((team, index) => {
+                    {allHouses.map((house, index) => {
                       return (
                         <tr key={index}>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                             {index + 1}
                           </td>
+                          <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
+                            <div
+                              style={{
+                                height: "60px",
+                                width: "60px",
+                                overflow: "hidden",
+                                alignItems: "center",
+                                alignContent: "center",
+                              }}
+                            >
+                              {house.thumbnail !== "" && (
+                                <img
+                                  style={{
+                                    maxHeight: "100%",
+                                    maxWidth: "100%",
+                                  }}
+                                  src={`https://api.videorpi.com/${house.thumbnail}`}
+                                />
+                              )}
+                            </div>
+                          </th>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                            {team.name}
+                            {house.type}
                           </td>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                            {team.managers.map((manager,index)=>{
-                      return(
-                        <span>({manager.fname})</span>
-                      )
-                    })}
+                            {house.houseType}
                           </td>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                            <i style={{fontSize:'20px',color:team.status==='1'?'green':'red'}} className={`${team.status==='1'?'fas fa-check':'fas fa-xmark'}`}/>
+                            {house.user.fname}
+                          </td>
+                          <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                            <a
+                              href={`https://web.videorpi.com/v/${getHouseTimestamp(
+                                house.createdAt
+                              )}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              View
+                            </a>
+                          </td>
+                          <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                            <i
+                              style={{
+                                fontSize: "20px",
+                                color: house.status === 1 ? "green" : "red",
+                              }}
+                              className={`${
+                                house.status === 1
+                                  ? "fas fa-check"
+                                  : "fas fa-xmark"
+                              }`}
+                            />
                           </td>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-right">
                             <TableDropdown
-                              isedit={true}
-                              isview={false}
+                              isedit={false}
+                              isview={true}
                               isdelete={true}
-                              handleedit={() => {history.push(`/teams/${team._id}`)}}
-                              handleview={{}}
-                              handledelete={() =>
-                                handledeleteclick(team._id)
-                              }
+                              handledelete={() => handledeleteclick(house._id)}
+                              handleview={handleViewClick(house)}
                             />
                           </td>
                         </tr>
@@ -210,7 +273,7 @@ const Teams = () => {
           </div>
         </div>
       </div>
-      {(isadding || isediting || isviewing) && (
+      {isviewing && (
         <div
           style={{
             height: "100vh",
@@ -225,8 +288,11 @@ const Teams = () => {
             zIndex: 51,
           }}
         >
-          {isadding&&(
-            <AddTeamModal handleClose={()=>setisadding(false)} GieId={gieId} Agencyid={agencyId} handlefetch={handleGetAllteams}/>
+          {isviewing && (
+            <ViewHouseModal
+              handleClose={() => setisviewing(false)}
+              Housetoview={housetoview}
+            />
           )}
         </div>
       )}
@@ -234,4 +300,4 @@ const Teams = () => {
   );
 };
 
-export default Teams;
+export default House;

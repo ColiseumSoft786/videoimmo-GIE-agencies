@@ -174,6 +174,27 @@ export default function Sidebar() {
                   Teams
                 </Link>
               </li>
+              <li className="items-center">
+                <Link
+                  className={
+                    "text-xs uppercase py-3 font-bold block " +
+                    (window.location.href.indexOf("/houses") !== -1
+                      ? "text-lightBlue-500 hover:text-lightBlue-600"
+                      : "text-blueGray-700 hover:text-blueGray-500")
+                  }
+                  to="/houses"
+                >
+                  <i
+                    className={
+                      "fas fa-home mr-2 text-sm " +
+                      (window.location.href.indexOf("/house") !== -1
+                        ? "opacity-75"
+                        : "text-blueGray-300")
+                    }
+                  ></i>{" "}
+                  Houses
+                </Link>
+              </li>
               {isGie&&!isAgency&&<li className="items-center">
                 <Link
                   className={

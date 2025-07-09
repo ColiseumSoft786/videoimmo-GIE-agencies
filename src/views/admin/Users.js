@@ -14,8 +14,10 @@ import AddUserModal from "views/Modals/AddUserModal";
 import { deleteUser } from "apis/users";
 import EditUserModal from "views/Modals/EditUserModal";
 import ViewUserModal from "views/Modals/ViewUserModal";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 const Users = () => {
   const color = "light";
+  const history = useHistory()
   const isGie = useSelector((state) => state.login.isGie);
   const isAgency = useSelector((state) => state.login.isAgency);
   const gieId = isGie
@@ -224,7 +226,10 @@ const Users = () => {
                             {user.user.country_Code}-{user.user.mobile_no}
                           </td>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                            <button className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
+                            <button 
+                            onClick={()=>{history.push(`/houses/${user.user._id}/${user.user.fname}`)}}
+                            className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                            >
                               List Houses
                             </button>
                           </td>
