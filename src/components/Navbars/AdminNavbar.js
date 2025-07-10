@@ -1,8 +1,18 @@
 import React from "react";
 
 import UserDropdown from "components/Dropdowns/UserDropdown.js";
+import { useDispatch, useSelector } from "react-redux";
+import { setsearchtext } from "utils/ReduxSlices/LoginSlice";
 
 export default function Navbar() {
+  const dispatch = useDispatch()
+  const searchText = useSelector((state)=>state.login.searchText)
+  const isGie = useSelector((state) => state.login.isGie);
+  const expiry = localStorage.getItem('expiry')
+  const userName = isGie?localStorage.getItem("giename"):localStorage.getItem("agencyname");
+  const handlechangesearchtext=(text)=>{
+    dispatch(setsearchtext(text))
+  }
   return (
     <>
       {/* Navbar */}
@@ -11,13 +21,16 @@ export default function Navbar() {
           {/* Brand */}
           <a
             className="text-white text-sm uppercase hidden lg:inline-block font-semibold"
-            href="#pablo"
-            onClick={(e) => e.preventDefault()}
           >
-            Dashboard
+            {userName}
+          </a>
+          <a
+            className="text-white text-sm uppercase hidden lg:inline-block font-semibold"
+          >
+            Expires On : {expiry.slice(0,10)}
           </a>
           {/* Form */}
-          <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
+          {(!window.location.pathname.includes('houses')&&!window.location.pathname.includes('settings')&&!window.location.pathname.includes('dashboard'))&&<form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
             <div className="relative flex w-full flex-wrap items-stretch">
               <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
                 <i className="fas fa-search"></i>
@@ -25,10 +38,12 @@ export default function Navbar() {
               <input
                 type="text"
                 placeholder="Search here..."
+                value={searchText}
+                onChange={(e)=>handlechangesearchtext(e.target.value)}
                 className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"
               />
             </div>
-          </form>
+          </form>}
           {/* User */}
           <ul className="flex-col md:flex-row list-none items-center hidden md:flex">
             <UserDropdown />

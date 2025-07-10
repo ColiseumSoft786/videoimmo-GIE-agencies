@@ -14,7 +14,7 @@ const AddMemberModal = ({ handleClose,Team,handlefetch }) => {
   const [allUsers,setAllUsers] = useState([])
   const handleGetAllUserNames = async()=>{
     try {
-        const response = await getOtherUserNames(Team._id,Team.agency)
+        const response = await getOtherUserNames(Team._id,Team.agency._id)
         if(!response.error){
             setAllUsers(response.data.data)
         }

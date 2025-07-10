@@ -3,6 +3,7 @@ import { deleteAPI } from "apis"
 import { postAPI } from "apis"
 import { getAPI } from "apis"
 import { GET_MANAGER_TEAM } from "apis/apiurls"
+import { GET_ALL_GIE_TEAMS } from "apis/apiurls"
 import { DELETE_TEAM_BY_AGENCY } from "apis/apiurls"
 import { UPDATE_TEAM_MANAGERS } from "apis/apiurls"
 import { UPDATE_TEAM_NAME } from "apis/apiurls"
@@ -77,5 +78,15 @@ export const deleteTeamByAgency = async(id)=>{
         return response
     } catch (error) {
         console.log('error in delete team by agency',error)
+    }
+}
+export const getAllGieTeams = async(id)=>{
+    try {
+        const path = GET_ALL_GIE_TEAMS+id
+        const response = await getAPI(path,true)
+        console.log('response from get all gie teams',response)
+        return response
+    } catch (error) {
+        console.log('error in get all gie teams',error)
     }
 }

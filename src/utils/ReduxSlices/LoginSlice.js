@@ -4,6 +4,7 @@ const initialState = {
     otp:null,
     isGie:false,
     isAgency:false,
+    searchText:''
 }
 const LoginSlice = createSlice({
     name:'login',
@@ -20,8 +21,11 @@ const LoginSlice = createSlice({
         },
         setisagency:(state,action)=>{
             state.isAgency=action.payload
+        },
+        setsearchtext:(state,action)=>{
+            state.searchText = action.payload
         }
     }
 })
-export const {setisLoggedin,setisgie,setisagency}=LoginSlice.actions
+export const {setisLoggedin,setisgie,setisagency,setsearchtext}=LoginSlice.actions
 export default LoginSlice.reducer

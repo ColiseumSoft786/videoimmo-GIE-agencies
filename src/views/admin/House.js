@@ -14,14 +14,20 @@ import AddUserModal from "views/Modals/AddUserModal";
 import { deleteUser } from "apis/users";
 import EditUserModal from "views/Modals/EditUserModal";
 import ViewUserModal from "views/Modals/ViewUserModal";
-import { useParams } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useLocation, useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { getAllUserHouses } from "apis/houses";
 import { getAllHousesByAgency } from "apis/houses";
 import { deleteHouseByAgency } from "apis/houses";
 import ViewHouseModal from "views/Modals/ViewHouseModal";
+import { getHousesByGie } from "apis/houses";
+import { getAllAgenciesNames } from "apis/agency";
+
 const House = () => {
   const color = "light";
+  const history = useHistory()
+  const location = useLocation()
   const { userid, username } = useParams();
+  const {agId} = useParams()
   const isGie = useSelector((state) => state.login.isGie);
   const isAgency = useSelector((state) => state.login.isAgency);
   const gieId = isGie
@@ -32,12 +38,24 @@ const House = () => {
   const [allHouses, setAllHouses] = useState([]);
   const [isviewing, setisviewing] = useState(false);
   const [housetoview, sethousetoview] = useState(null);
+  const [selectedAgency, setSelectedAgency] = useState("");
+    const [allagencies, setallagencies] = useState([]);
   const handleGetAllHouses = async () => {
     try {
       let response = {};
       setisloading(true);
       if (window.location.pathname==='/houses') {
-        response = await getAllHousesByAgency(agencyId);
+        if(isGie){
+          if(agId){
+            response = await getAllHousesByAgency(agId)
+          }else{
+            response = await getHousesByGie(gieId);
+          }
+          
+        }
+        if(isAgency){
+          response = await getAllHousesByAgency(agencyId);
+        }
       } else {
         response = await getAllUserHouses(userid);
       }
@@ -49,9 +67,20 @@ const House = () => {
       console.log("error in fetching houses", error);
     }
   };
+  const handleGetAllAgencyNames = async () => {
+      const response = await getAllAgenciesNames(gieId);
+      if (!response.error) {
+        setallagencies(response.data);
+      }
+    };
   useEffect(() => {
+    if(window.location.pathname.includes('houses')){
+    if(isGie){
+      handleGetAllAgencyNames()
+    }
     handleGetAllHouses();
-  }, []);
+  }
+  }, [location]);
   const handledeleteclick = async (id) => {
     const response = await deleteHouseByAgency(id);
     if (!response.error) {
@@ -65,6 +94,11 @@ const House = () => {
   const handleViewClick = (house) => {
     sethousetoview(house);
     setisviewing(true);
+  };
+  const handlefilterclick = () => {
+    if (selectedAgency.trim() !== "") {
+      history.push(`/houses/${selectedAgency}`);
+    }
   };
   return (
     <>
@@ -89,11 +123,54 @@ const House = () => {
                   </h3>
                   <div
                     style={{
-                      width: "40%",
+                      width: "50%",
                       display: "flex",
                       justifyContent: isGie ? "space-between" : "end",
                     }}
-                  ></div>
+                  >
+                    {isGie && !isAgency && (
+                      <div style={{ width: "40%" }}>
+                        <select
+                          value={selectedAgency}
+                          onChange={(e) => setSelectedAgency(e.target.value)}
+                          className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        >
+                          <option value={""}>Select</option>
+                          {allagencies.map((agency, index) => {
+                            return (
+                              <option value={agency._id} key={index}>
+                                {agency.name}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+                    )}
+                    {isGie &&(
+                      <>
+                        <button
+                          disabled={selectedAgency === ""}
+                          className={`bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 ${
+                            selectedAgency === ""
+                              ? "opacity-50"
+                              : "active:bg-blueGray-600"
+                          }`}
+                          onClick={handlefilterclick}
+                        >
+                          Filter
+                        </button>
+                        <button
+                          onClick={() => {
+                            history.push("/houses");
+                            setSelectedAgency('')
+                          }}
+                          className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                        >
+                          Clear Filter
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

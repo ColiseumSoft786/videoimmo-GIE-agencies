@@ -70,7 +70,7 @@ export default function Login() {
       if (!response.error) {
         localStorage.setItem("agencyname", response.data.agency.name);
         localStorage.setItem("agency_id", response.data.agency._id);
-        localStorage.setItem("parent_gie",response.data.agency.giea)
+        localStorage.setItem("parent_gie",response.data.agency.gie)
         localStorage.setItem("access_token", response.data.token);
         dispatch(setisLoggedin(true));
         localStorage.setItem("isLoggedIn", true);
@@ -87,6 +87,7 @@ export default function Login() {
         localStorage.setItem("giename", response.data.gie.name);
         localStorage.setItem("gie_id", response.data.gie._id);
         localStorage.setItem("access_token", response.data.token);
+        localStorage.setItem('expiry',response.data.gie.expiresOn);
         dispatch(setisLoggedin(true));
         localStorage.setItem("isLoggedIn", true);
         toastService.success("Logged In Successfully");

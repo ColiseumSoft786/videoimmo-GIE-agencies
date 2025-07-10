@@ -1,5 +1,6 @@
 import { deleteAPI } from "apis"
 import { getAPI } from "apis"
+import { GET_ALL_HOUSES_BY_GIE } from "apis/apiurls"
 import { DELETE_HOUSE_BY_AGENCY } from "apis/apiurls"
 import { GET_ALL_HOUSES_BY_AGENCY } from "apis/apiurls"
 import { GET_USER_HOUSES } from "apis/apiurls"
@@ -32,5 +33,15 @@ export const deleteHouseByAgency = async(id)=>{
         return response
     } catch (error) {
         console.log('error in delete house by agency',error)
+    }
+}
+export const getHousesByGie = async(id)=>{
+    try {
+        const path = GET_ALL_HOUSES_BY_GIE+id
+        const response = await getAPI(path,true)
+        console.log('response from get all houses by gie',response)
+        return response
+    } catch (error) {
+        console.log('error in get all houses by gie',error)
     }
 }

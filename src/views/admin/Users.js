@@ -14,47 +14,81 @@ import AddUserModal from "views/Modals/AddUserModal";
 import { deleteUser } from "apis/users";
 import EditUserModal from "views/Modals/EditUserModal";
 import ViewUserModal from "views/Modals/ViewUserModal";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import {
+  useHistory,
+  useLocation,
+  useParams,
+} from "react-router-dom/cjs/react-router-dom.min";
+import { getAllAgenciesNames } from "apis/agency";
 const Users = () => {
   const color = "light";
-  const history = useHistory()
+  const location = useLocation();
+  const { agId } = useParams();
+  console.log("this is selected agency", agId);
+  const history = useHistory();
   const isGie = useSelector((state) => state.login.isGie);
   const isAgency = useSelector((state) => state.login.isAgency);
+  const searchtext = useSelector((state) => state.login.searchText);
   const gieId = isGie
     ? localStorage.getItem("gie_id")
     : localStorage.getItem("parent_gie");
   const agencyId = isAgency ? localStorage.getItem("agency_id") : "";
   const [isloading, setisloading] = useState(true);
   const [allUsers, setAllUsers] = useState([]);
+  const [userToList, setUserToList] = useState([]);
   const [isediting, setisEditing] = useState(false);
   const [isadding, setisadding] = useState(false);
   const [isviewing, setisviewing] = useState(false);
   const [usertoview, setusertoview] = useState(null);
+  const [allagencies, setallagencies] = useState([]);
+  const [selectedAgency, setSelectedAgency] = useState("");
   const handleGetAllUsers = async () => {
     try {
       setisloading(true);
       let response = [];
       if (isGie) {
-        response = await getAllUserByGieId(gieId);
-        if (!response.error) {
-          setAllUsers(response.data);
-          setisloading(false);
+        if (agId) {
+          response = await getAllUsersByAgencyId(agId);
+          if (!response.error) {
+            setAllUsers(response.data);
+            setUserToList(response.data);
+            setisloading(false);
+          }
+        } else {
+          response = await getAllUserByGieId(gieId);
+          if (!response.error) {
+            setAllUsers(response.data);
+            setUserToList(response.data);
+            setisloading(false);
+          }
         }
       }
       if (isAgency) {
         response = await getAllUsersByAgencyId(agencyId);
         if (!response.error) {
           setAllUsers(response.data);
+          setUserToList(response.data);
           setisloading(false);
         }
       }
     } catch (error) {
-      console.log('error in fetching users',error)
+      console.log("error in fetching users", error);
+    }
+  };
+  const handleGetAllAgencyNames = async () => {
+    const response = await getAllAgenciesNames(gieId);
+    if (!response.error) {
+      setallagencies(response.data);
     }
   };
   useEffect(() => {
-    handleGetAllUsers();
-  }, []);
+    if (window.location.pathname.includes("users")) {
+      handleGetAllUsers();
+      if (isGie) {
+        handleGetAllAgencyNames();
+      }
+    }
+  }, [location]);
   const handleeditclick = (user) => {
     setisEditing(true);
     setusertoview(user);
@@ -63,13 +97,32 @@ const Users = () => {
     setisviewing(true);
     setusertoview(user);
   };
-  const handledeleteclick = async(id) => {
-    const response = await deleteUser(id)
-    if(!response.error){
-      toastService.success('User Deleted Successfully')
-      handleGetAllUsers()
+  const handledeleteclick = async (id) => {
+    const response = await deleteUser(id);
+    if (!response.error) {
+      toastService.success("User Deleted Successfully");
+      handleGetAllUsers();
     }
   };
+  const HandleFilterUsers = () => {
+    if (searchtext === "") {
+      setUserToList(allUsers);
+    } else {
+      setUserToList(
+        allUsers.filter((user) =>
+          user.fname.toLowerCase().includes(searchtext.toLowerCase())
+        )
+      );
+    }
+  };
+  const handlefilterclick = () => {
+    if (selectedAgency.trim() !== "") {
+      history.push(`/users/${selectedAgency}`);
+    }
+  };
+  useEffect(() => {
+    HandleFilterUsers();
+  }, [searchtext]);
   return (
     <>
       <div className="flex flex-wrap mt-4">
@@ -93,25 +146,59 @@ const Users = () => {
                   </h3>
                   <div
                     style={{
-                      width: "40%",
+                      width: "50%",
                       display: "flex",
                       justifyContent: isGie ? "space-between" : "end",
                     }}
                   >
                     {isGie && !isAgency && (
-                      <div style={{ width: "60%" }}>
-                        <select className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150">
-                          <option value="hello">Hello</option>
+                      <div style={{ width: "40%" }}>
+                        <select
+                          value={selectedAgency}
+                          onChange={(e) => setSelectedAgency(e.target.value)}
+                          className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        >
+                          <option value={""}>Select</option>
+                          {allagencies.map((agency, index) => {
+                            return (
+                              <option value={agency._id} key={index}>
+                                {agency.name}
+                              </option>
+                            );
+                          })}
                         </select>
                       </div>
                     )}
-                    {isAgency && !isGie && (
+                    {isAgency && !isGie ? (
                       <button
-                        className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                        className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                         onClick={() => setisadding(true)}
                       >
                         Add User
                       </button>
+                    ) : (
+                      <>
+                        <button
+                          disabled={selectedAgency === ""}
+                          className={`bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 ${
+                            selectedAgency === ""
+                              ? "opacity-50"
+                              : "active:bg-blueGray-600"
+                          }`}
+                          onClick={handlefilterclick}
+                        >
+                          Filter
+                        </button>
+                        <button
+                          onClick={() => {
+                            history.push("/users");
+                            setSelectedAgency('')
+                          }}
+                          className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                        >
+                          Clear Filter
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>
@@ -170,6 +257,18 @@ const Users = () => {
                       >
                         Mobile #
                       </th>
+                      {isGie && (
+                        <th
+                          className={
+                            "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " +
+                            (color === "light"
+                              ? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                              : "bg-lightBlue-800 text-lightBlue-300 border-lightBlue-700")
+                          }
+                        >
+                          Agency
+                        </th>
+                      )}
                       <th
                         className={
                           "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " +
@@ -194,14 +293,14 @@ const Users = () => {
                   </thead>
 
                   <tbody>
-                    {allUsers.map((user, index) => {
+                    {userToList.map((user, index) => {
                       return (
                         <tr key={index}>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                             {index + 1}
                           </td>
                           <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
-                            {user.user.image.trim() === "" ? (
+                            {user.image.trim() === "" ? (
                               <div>
                                 <span
                                   style={{ height: "25px", width: "25px" }}
@@ -212,7 +311,7 @@ const Users = () => {
                               </div>
                             ) : (
                               <img
-                                src={`https://api.videorpi.com/${user.user.image}`}
+                                src={`https://api.videorpi.com/${user.image}`}
                                 style={{ height: "25px", width: "25px" }}
                                 className=" bg-white rounded-full border"
                                 alt="..."
@@ -220,15 +319,24 @@ const Users = () => {
                             )}
                           </th>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                            {user.user.fname}
+                            {user.fname}
                           </td>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                            {user.user.country_Code}-{user.user.mobile_no}
+                            {user.country_Code}-{user.mobile_no}
                           </td>
+                          {isGie && (
+                            <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                              {user.agency.name}
+                            </td>
+                          )}
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                            <button 
-                            onClick={()=>{history.push(`/houses/${user.user._id}/${user.user.fname}`)}}
-                            className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                            <button
+                              onClick={() => {
+                                history.push(
+                                  `/houses/${user._id}/${user.fname}`
+                                );
+                              }}
+                              className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                             >
                               List Houses
                             </button>
@@ -238,10 +346,10 @@ const Users = () => {
                               isedit={true}
                               isview={true}
                               isdelete={true}
-                              handleedit={() => handleeditclick(user.user)}
-                              handleview={() => handleviewclick(user.user)}
+                              handleedit={() => handleeditclick(user)}
+                              handleview={() => handleviewclick(user)}
                               handledelete={() =>
-                                handledeleteclick(user.user._id)
+                                handledeleteclick(user._id)
                               }
                             />
                           </td>
@@ -278,19 +386,19 @@ const Users = () => {
               handlefetch={handleGetAllUsers}
             />
           )}
-          {isediting&&(
+          {isediting && (
             <EditUserModal
-            handleClose={()=>setisEditing(false)}
-            usertoedit={usertoview}
-            GieId={gieId}
-            Agencyid={agencyId}
-            handlefetch={handleGetAllUsers}
+              handleClose={() => setisEditing(false)}
+              usertoedit={usertoview}
+              GieId={gieId}
+              Agencyid={agencyId}
+              handlefetch={handleGetAllUsers}
             />
           )}
-          {isviewing&&(
+          {isviewing && (
             <ViewUserModal
-            handleClose={()=>setisviewing(false)} 
-            Usertoview={usertoview}
+              handleClose={() => setisviewing(false)}
+              Usertoview={usertoview}
             />
           )}
         </div>

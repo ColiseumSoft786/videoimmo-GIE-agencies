@@ -1,5 +1,7 @@
 import { getAPI } from "apis"
 import { GET_ALL_GIE_TEAMS_LENGTH } from "apis/apiurls"
+import { GET_GIE_HOUSE_LENGTH } from "apis/apiurls"
+import { GET_ALL_AGENCIES_LENGTH_BY_GIE } from "apis/apiurls"
 import { GET_AGENCY_HOUSE_LENGTH } from "apis/apiurls"
 import { GET_ALL_AGENCY_TEAMS_LENGTH } from "apis/apiurls"
 import { GET_ALL_GIE_USERS_LENGTH } from "apis/apiurls"
@@ -53,5 +55,25 @@ export const getAllHouseslengthByAgency = async (id)=>{
         return response
     } catch (error) {
         console.log('error in get all houses lenghht by agency',error)
+    }
+}
+export const getAllHouseslengthByGie = async (id)=>{
+    try {
+        const path = GET_GIE_HOUSE_LENGTH+id
+        const response = await getAPI(path,true)
+        console.log('response from get all houses length by gie',response)
+        return response
+    } catch (error) {
+        console.log('error in get all houses lenghht by gie',error)
+    }
+}
+export const getAllAgenciesLengthByGie = async (id)=>{
+    try {
+        const path = GET_ALL_AGENCIES_LENGTH_BY_GIE+id
+        const response = await getAPI(path,true)
+        console.log("response get all agencies length by gie",response)
+        return response
+    } catch (error) {
+        console.log('error in get all agencies length by gie',error)
     }
 }

@@ -7,11 +7,14 @@ import { deleteAgency } from "apis/agency";
 import toastService from "utils/Toaster/toaster";
 import EditAgencyModal from "views/Modals/EditAgencyModal";
 import ViewAgencyModal from "views/Modals/ViewAgencyModal";
+import { useSelector } from "react-redux";
 const Agencies = () => {
   const color = "light";
+  const searchText = useSelector((state)=>state.login.searchText)
   const [isadding, setisadding] = useState(false);
   const [isloading, setisloading] = useState(true);
   const [allAgencies, setAllAgencies] = useState([]);
+  const [agencyToList,setAgencytoList] = useState([])
   const [agencytoview,setagencytoview] = useState(null)
   const [isediting, setisediting] = useState(false);
   const [isviewing, setisviewing] = useState(false);
@@ -24,6 +27,7 @@ const Agencies = () => {
       const response = await getAllAgencies(GieId);
       if (!response.error) {
         setAllAgencies(response.data);
+        setAgencytoList(response.data)
         setisloading(false);
       }
     }
@@ -46,6 +50,16 @@ const Agencies = () => {
       handleGetAllAgencies()
     }
   };
+  const handlefilteragency = ()=>{
+    if(searchText===''){
+      setAgencytoList(allAgencies)
+    }else{
+      setAgencytoList(allAgencies.filter((agency)=>agency.name.toLowerCase().includes(searchText.toLowerCase())))
+    }
+  }
+  useEffect(()=>{
+    handlefilteragency()
+  },[searchText])
   return (
     <>
       <div className="flex flex-wrap mt-4">
@@ -68,7 +82,7 @@ const Agencies = () => {
                     Agencies
                   </h3>
                   <button
-                    className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                    className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                     onClick={() => setisadding(true)}
                   >
                     Add Agency
@@ -143,7 +157,7 @@ const Agencies = () => {
                   </thead>
 
                   <tbody>
-                    {allAgencies.map((agency, index) => {
+                    {agencyToList.map((agency, index) => {
                       return (
                         <tr key={index}>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">

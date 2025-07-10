@@ -114,16 +114,9 @@ const EditTeamModal = () => {
                         justifyContent: isGie ? "space-between" : "end",
                       }}
                     >
-                      {isGie && !isAgency && (
-                        <div style={{ width: "60%" }}>
-                          <select className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150">
-                            <option value="hello">Hello</option>
-                          </select>
-                        </div>
-                      )}
                       {isAgency && !isGie && (
                         <button
-                          className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                          className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                           onClick={() => setisEditing(true)}
                         >
                           Edit Team Name
@@ -152,16 +145,9 @@ const EditTeamModal = () => {
                         justifyContent: isGie ? "space-between" : "end",
                       }}
                     >
-                      {isGie && !isAgency && (
-                        <div style={{ width: "60%" }}>
-                          <select className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150">
-                            <option value="hello">Hello</option>
-                          </select>
-                        </div>
-                      )}
                       {isAgency && !isGie && (
                         <button
-                          className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                          className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                           onClick={() => setisManagerAdd(true)}
                         >
                           Add Manager
@@ -212,7 +198,7 @@ const EditTeamModal = () => {
                         >
                           Mobile #
                         </th>
-                        <th
+                        {isAgency&&<th
                           className={
                             "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " +
                             (color === "light"
@@ -221,7 +207,7 @@ const EditTeamModal = () => {
                           }
                         >
                           Actions
-                        </th>
+                        </th>}
                       </tr>
                     </thead>
 
@@ -257,7 +243,7 @@ const EditTeamModal = () => {
                             <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                               {manager.country_Code}-{manager.mobile_no}
                             </td>
-                            <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-right">
+                            {isAgency&&<td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-right">
                               <TableDropdown
                                 isedit={false}
                                 isview={false}
@@ -268,7 +254,7 @@ const EditTeamModal = () => {
                                   handleRemoveManager(manager._id)
                                 }
                               />
-                            </td>
+                            </td>}
                           </tr>
                         );
                       })}
@@ -294,16 +280,9 @@ const EditTeamModal = () => {
                         justifyContent: isGie ? "space-between" : "end",
                       }}
                     >
-                      {isGie && !isAgency && (
-                        <div style={{ width: "60%" }}>
-                          <select className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150">
-                            <option value="hello">Hello</option>
-                          </select>
-                        </div>
-                      )}
                       {isAgency && !isGie && (
                         <button
-                          className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                          className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                           onClick={() => setIsMemberAdd(true)}
                         >
                           Add Member
@@ -354,7 +333,7 @@ const EditTeamModal = () => {
                         >
                           Mobile #
                         </th>
-                        <th
+                       {isAgency&& <th
                           className={
                             "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " +
                             (color === "light"
@@ -363,7 +342,7 @@ const EditTeamModal = () => {
                           }
                         >
                           Actions
-                        </th>
+                        </th>}
                       </tr>
                     </thead>
 
@@ -399,7 +378,7 @@ const EditTeamModal = () => {
                             <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                               {manager.country_Code}-{manager.mobile_no}
                             </td>
-                            <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-right">
+                            {isAgency&&<td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-right">
                               <TableDropdown
                                 isedit={false}
                                 isview={false}
@@ -410,7 +389,7 @@ const EditTeamModal = () => {
                                   handleRemoveMember(manager._id)
                                 }
                               />
-                            </td>
+                            </td>}
                           </tr>
                         );
                       })}
