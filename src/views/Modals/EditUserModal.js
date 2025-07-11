@@ -42,10 +42,10 @@ const EditUserModal = ({handleClose ,usertoedit, GieId,Agencyid , handlefetch}) 
     <div>
         <div className="flex content-center items-center justify-center h-full">
                   <div className="w-full px-4">
-                    <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-200 border-0">
+                    <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-white border-0">
                       <div className="rounded-t mb-0 px-6 py-6">
                         <div className="text-center mb-3">
-                          <h6 className="text-blueGray-500 text-sm font-bold">
+                          <h6 className="text-blueGray-500 text-xl font-bold">
                             Edit User
                           </h6>
                         </div>
@@ -93,7 +93,7 @@ const EditUserModal = ({handleClose ,usertoedit, GieId,Agencyid , handlefetch}) 
                             </div>
                           <div className="text-center mt-6">
                               <button
-                                className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none w-full ease-linear transition-all duration-150"
+                                className="bg-red-600 text-white active:bg-red-500 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none w-full ease-linear transition-all duration-150"
                                 type="submit"
                               >
                                 Edit
@@ -101,7 +101,7 @@ const EditUserModal = ({handleClose ,usertoedit, GieId,Agencyid , handlefetch}) 
                           </div>
                           <div className="text-center mt-6">
                            <button
-                                className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none w-full ease-linear transition-all duration-150"
+                                className="bg-red-600 text-white active:bg-red-500 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none w-full ease-linear transition-all duration-150"
                                 onClick={handleClose}
                               >
                                 Cancel

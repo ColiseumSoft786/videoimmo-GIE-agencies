@@ -116,7 +116,7 @@ const EditTeamModal = () => {
                     >
                       {isAgency && !isGie && (
                         <button
-                          className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                          className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                           onClick={() => setisEditing(true)}
                         >
                           Edit Team Name
@@ -147,7 +147,7 @@ const EditTeamModal = () => {
                     >
                       {isAgency && !isGie && (
                         <button
-                          className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                          className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                           onClick={() => setisManagerAdd(true)}
                         >
                           Add Manager
@@ -223,7 +223,7 @@ const EditTeamModal = () => {
                                 <div>
                                   <span
                                     style={{ height: "25px", width: "25px" }}
-                                    className=" text-sm text-white bg-blueGray-600 inline-flex items-center justify-center rounded-full"
+                                    className=" text-sm text-white bg-red-500 inline-flex items-center justify-center rounded-full"
                                   >
                                     <i class="fas fa-user"></i>
                                   </span>
@@ -282,7 +282,7 @@ const EditTeamModal = () => {
                     >
                       {isAgency && !isGie && (
                         <button
-                          className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                          className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                           onClick={() => setIsMemberAdd(true)}
                         >
                           Add Member
@@ -358,7 +358,7 @@ const EditTeamModal = () => {
                                 <div>
                                   <span
                                     style={{ height: "25px", width: "25px" }}
-                                    className=" text-sm text-white bg-blueGray-600 inline-flex items-center justify-center rounded-full"
+                                    className=" text-sm text-white bg-red-500 inline-flex items-center justify-center rounded-full"
                                   >
                                     <i class="fas fa-user"></i>
                                   </span>

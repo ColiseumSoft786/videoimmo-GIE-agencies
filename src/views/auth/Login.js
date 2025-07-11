@@ -107,7 +107,7 @@ export default function Login() {
       <div className="container mx-auto px-4 h-full">
         <div className="flex content-center items-center justify-center h-full">
           <div className="w-full lg:w-4/12 px-4">
-            <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-200 border-0">
+            <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-white border-0">
               <div className="rounded-t mb-0 px-6 py-6">
                 <div className="text-center mb-3">
                   <h6 className="text-blueGray-500 text-sm font-bold">
@@ -161,7 +161,7 @@ export default function Login() {
                               style={{ borderRadius: "20px", width: "50%" }}
                               className={` cursor-pointer p-4 border flex flex-col items-center transition-all duration-300 ${
                                 selected === option.value
-                                  ? "border-blue-600 bg-blueGray-800 shadow-md text-white"
+                                  ? "border-blue-600 bg-red-600 shadow-md text-white"
                                   : "border-gray-300 hover:border-blue-400"
                               }`}
                             >
@@ -211,7 +211,7 @@ export default function Login() {
                   <div className="text-center mt-6">
                     {!isOtp && (
                       <button
-                        className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none w-full ease-linear transition-all duration-150"
+                        className="bg-red-600 text-white active:bg-red-500 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none w-full ease-linear transition-all duration-150"
                         type="button"
                         onClick={handleSendOtp}
                       >
@@ -222,16 +222,16 @@ export default function Login() {
                     {isOtp && (
                       <>
                         <button
-                          className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none w-full mb-2 ease-linear transition-all duration-150"
+                          className="bg-red-600 text-white active:bg-red-500 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none w-full mb-2 ease-linear transition-all duration-150"
                           type="submit"
                         >
                           Sign In
                         </button>
                         <button
-                          className={`bg-blueGray-800 text-white text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none w-full ease-linear transition-all duration-150 ${
+                          className={`bg-red-600 text-white text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none w-full ease-linear transition-all duration-150 ${
                             timer !== 0
                               ? "opacity-50"
-                              : "active:bg-blueGray-600"
+                              : "active:bg-red-500"
                           }`}
                           type="button"
                           disabled={timer !== 0}

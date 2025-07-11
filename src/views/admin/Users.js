@@ -152,7 +152,7 @@ const Users = () => {
                     }}
                   >
                     {isGie && !isAgency && (
-                      <div style={{ width: "40%" }}>
+                      <div style={{ width: "50%" }}>
                         <select
                           value={selectedAgency}
                           onChange={(e) => setSelectedAgency(e.target.value)}
@@ -171,7 +171,7 @@ const Users = () => {
                     )}
                     {isAgency && !isGie ? (
                       <button
-                        className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                        className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                         onClick={() => setisadding(true)}
                       >
                         Add User
@@ -180,7 +180,7 @@ const Users = () => {
                       <>
                         <button
                           disabled={selectedAgency === ""}
-                          className={`bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 ${
+                          className={`bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 ${
                             selectedAgency === ""
                               ? "opacity-50"
                               : "active:bg-blueGray-600"
@@ -194,7 +194,7 @@ const Users = () => {
                             history.push("/users");
                             setSelectedAgency('')
                           }}
-                          className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                          className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                         >
                           Clear Filter
                         </button>
@@ -336,7 +336,7 @@ const Users = () => {
                                   `/houses/${user._id}/${user.fname}`
                                 );
                               }}
-                              className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                              className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                             >
                               List Houses
                             </button>

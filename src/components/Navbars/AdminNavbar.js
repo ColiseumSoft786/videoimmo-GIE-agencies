@@ -24,11 +24,11 @@ export default function Navbar() {
           >
             {userName}
           </a>
-          <a
+          {isGie&&<a
             className="text-white text-sm uppercase hidden lg:inline-block font-semibold"
           >
             Expires On : {expiry.slice(0,10)}
-          </a>
+          </a>}
           {/* Form */}
           {(!window.location.pathname.includes('houses')&&!window.location.pathname.includes('settings')&&!window.location.pathname.includes('dashboard'))&&<form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
             <div className="relative flex w-full flex-wrap items-stretch">
@@ -40,7 +40,7 @@ export default function Navbar() {
                 placeholder="Search here..."
                 value={searchText}
                 onChange={(e)=>handlechangesearchtext(e.target.value)}
-                className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"
+                className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"
               />
             </div>
           </form>}

@@ -94,7 +94,7 @@ export default function Sidebar() {
                   className={
                     "text-xs uppercase py-3 font-bold block " +
                     (window.location.href.indexOf("/dashboard") !== -1
-                      ? "text-lightBlue-500 hover:text-lightBlue-600"
+                      ? "text-red-600 hover:text-red-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
                   to="/dashboard"
@@ -116,7 +116,7 @@ export default function Sidebar() {
                   className={
                     "text-xs uppercase py-3 font-bold block " +
                     (window.location.href.indexOf("/tables") !== -1
-                      ? "text-lightBlue-500 hover:text-lightBlue-600"
+                      ? "text-red-600 hover:text-red-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
                   to="/tables"
@@ -137,7 +137,7 @@ export default function Sidebar() {
                   className={
                     "text-xs uppercase py-3 font-bold block " +
                     (window.location.href.indexOf("/users") !== -1
-                      ? "text-lightBlue-500 hover:text-lightBlue-600"
+                      ? "text-red-600 hover:text-red-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
                   to="/users"
@@ -158,7 +158,7 @@ export default function Sidebar() {
                   className={
                     "text-xs uppercase py-3 font-bold block " +
                     (window.location.href.indexOf("/teams") !== -1
-                      ? "text-lightBlue-500 hover:text-lightBlue-600"
+                      ? "text-red-600 hover:text-red-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
                   to="/teams"
@@ -179,7 +179,7 @@ export default function Sidebar() {
                   className={
                     "text-xs uppercase py-3 font-bold block " +
                     (window.location.href.indexOf("/houses") !== -1
-                      ? "text-lightBlue-500 hover:text-lightBlue-600"
+                      ? "text-red-600 hover:text-red-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
                   to="/houses"
@@ -200,7 +200,7 @@ export default function Sidebar() {
                   className={
                     "text-xs uppercase py-3 font-bold block " +
                     (window.location.href.indexOf("/agencies") !== -1
-                      ? "text-lightBlue-500 hover:text-lightBlue-600"
+                      ? "text-red-600 hover:text-red-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
                   to="/agencies"
@@ -221,7 +221,7 @@ export default function Sidebar() {
                   className={
                     "text-xs uppercase py-3 font-bold block " +
                     (window.location.href.indexOf("/settings") !== -1
-                      ? "text-lightBlue-500 hover:text-lightBlue-600"
+                      ? "text-red-600 hover:text-red-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
                   to="/settings"
@@ -242,7 +242,7 @@ export default function Sidebar() {
                   className={
                     "text-xs uppercase py-3 font-bold block " +
                     (window.location.href.indexOf("/maps") !== -1
-                      ? "text-lightBlue-500 hover:text-lightBlue-600"
+                      ? "text-red-600 hover:text-red-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
                   to="/maps"

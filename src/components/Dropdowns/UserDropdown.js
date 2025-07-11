@@ -34,7 +34,7 @@ const UserDropdown = () => {
         }}
       >
         <div className="items-center flex">
-          <span className="w-12 h-12 text-xl text-white bg-blueGray-600 inline-flex items-center justify-center rounded-full">
+          <span className="w-12 h-12 text-xl text-white bg-red-400 inline-flex items-center justify-center rounded-full">
             <i class="fas fa-user"></i>
           </span>
         </div>

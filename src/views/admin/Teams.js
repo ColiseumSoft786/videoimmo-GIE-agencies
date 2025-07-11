@@ -144,7 +144,7 @@ const Teams = () => {
                     }}
                   >
                     {isGie && !isAgency && (
-                      <div style={{ width: "40%" }}>
+                      <div style={{ width: "50%" }}>
                         <select
                           value={selectedAgency}
                           onChange={(e) => setSelectedAgency(e.target.value)}
@@ -163,7 +163,7 @@ const Teams = () => {
                     )}
                     {isAgency && !isGie ? (
                       <button
-                        className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                        className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                         onClick={() => setisadding(true)}
                       >
                         Add Team
@@ -172,7 +172,7 @@ const Teams = () => {
                       <>
                         <button
                           disabled={selectedAgency === ""}
-                          className={`bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150${
+                          className={`bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 ${
                             selectedAgency === ""
                               ? "opacity-50"
                               : "active:bg-blueGray-600"
@@ -186,7 +186,7 @@ const Teams = () => {
                             history.push("/teams");
                             setSelectedAgency('')
                           }}
-                          className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                          className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                         >
                           Clear Filter
                         </button>
@@ -286,7 +286,7 @@ const Teams = () => {
                           </td>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                             {team.managers.map((manager, index) => {
-                              return <span>({manager.fname})</span>;
+                              return <span>({manager.fname})</span>
                             })}
                           </td>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
