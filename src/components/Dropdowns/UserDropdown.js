@@ -5,9 +5,10 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 const UserDropdown = () => {
   // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
-  const history = useHistory()
+  const history = useHistory();
   const btnDropdownRef = React.createRef();
   const popoverDropdownRef = React.createRef();
+  const agencyimage = localStorage.getItem("agencyimage");
   const openDropdownPopover = () => {
     createPopper(btnDropdownRef.current, popoverDropdownRef.current, {
       placement: "bottom-start",
@@ -17,11 +18,11 @@ const UserDropdown = () => {
   const closeDropdownPopover = () => {
     setDropdownPopoverShow(false);
   };
-  const handleLogOut=(e)=>{
-    e.preventDefault()
-    localStorage.clear()
-    history.replace('/auth/login')
-  }
+  const handleLogOut = (e) => {
+    e.preventDefault();
+    localStorage.clear();
+    history.replace("/auth/login");
+  };
   return (
     <>
       <a
@@ -33,11 +34,24 @@ const UserDropdown = () => {
           dropdownPopoverShow ? closeDropdownPopover() : openDropdownPopover();
         }}
       >
-        <div className="items-center flex">
-          <span className="w-12 h-12 text-xl text-white bg-red-400 inline-flex items-center justify-center rounded-full">
-            <i class="fas fa-user"></i>
-          </span>
-        </div>
+        {agencyimage && agencyimage !== "" ? (
+          <div
+            style={{
+              height: "48px",
+              width: "48px",
+              borderRadius: "50%",
+              overflow: "hidden",
+            }}
+          >
+            <img alt="image" src={`https://api.videorpi.com/${agencyimage}`} />
+          </div>
+        ) : (
+          <div className="items-center flex">
+            <span className="w-12 h-12 text-xl text-white bg-red-400 inline-flex items-center justify-center rounded-full">
+              <i class="fas fa-user"></i>
+            </span>
+          </div>
+        )}
       </a>
       <div
         ref={popoverDropdownRef}

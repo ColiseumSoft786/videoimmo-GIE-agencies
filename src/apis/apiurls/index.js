@@ -34,3 +34,6 @@ export const GET_ALL_GIE_TEAMS_LENGTH = process.env.REACT_APP_ENDPOINT + 'user/g
 export const GET_ALL_AGENCIES_LENGTH_BY_GIE = process.env.REACT_APP_ENDPOINT +'agency/gie/getlength/'
 export const GET_ALL_GIE_TEAMS = process.env.REACT_APP_ENDPOINT + 'user/gieteams/'
 export const GET_GIE_TOKENS = process.env.REACT_APP_ENDPOINT + 'gie/getgie/tokens/'
+export const UPDATE_GIE_DETAILS = process.env.REACT_APP_ENDPOINT + 'gie/updatedetails/'
+export const UPDATE_AGENCY_DETAILS = process.env.REACT_APP_ENDPOINT + 'agency/updateagency/'
+export const UPLOAD_IMAGE_AGENCY = process.env.REACT_APP_ENDPOINT + "upload/agency/imgupload"

@@ -2,6 +2,8 @@ import { deleteAPI } from "apis"
 import { putAPI } from "apis"
 import { getAPI } from "apis"
 import { postAPI } from "apis"
+import { UPLOAD_IMAGE_AGENCY } from "apis/apiurls"
+import { UPDATE_AGENCY_DETAILS } from "apis/apiurls"
 import { DELETE_AGENCY } from "apis/apiurls"
 import { GET_ALL_AGENCY_NAMES } from "apis/apiurls"
 import { UPDATE_AGENCY } from "apis/apiurls"
@@ -55,5 +57,24 @@ export const getAllAgenciesNames = async(id)=>{
         return response
     } catch (error) {
         console.log('error in get all agencies names',error)
+    }
+}
+export const updateAgencyDetails = async(body,id)=>{
+    try {
+        const path = UPDATE_AGENCY_DETAILS+id
+        const response = await putAPI(path,body,true)
+        console.log('this is the response from update agency details',response)
+        return response
+    } catch (error) {
+        console.log('this is the error in update agency details', error)
+    }
+}
+export const updateAgencyImage = async(body)=>{
+    try {
+        const response = await postAPI(UPLOAD_IMAGE_AGENCY,body,true)
+        console.log('response from update agency image',response)
+        return response
+    } catch (error) {
+        console.log('error in update agency image ',error)
     }
 }
