@@ -69,9 +69,14 @@ const House = () => {
         if (currentpage > 1) {
           const prev = currentpage - 1;
           if (isGie) {
-            if (agId) {
-              history.push(`/houses/agency/${selectedAgency}/${prev}`);
-            } else {
+             const issingle = window.location.pathname.includes('of')
+            if(issingle){
+              history.push(`/houses/of/${userid}/${username}/${prev}`)
+            }
+            if (agId&&!issingle) {
+              history.push(`/houses/${selectedAgency}/${prev}`);
+            } 
+            if(!agId&&!issingle){
               history.push(`/houses/${prev}`);
             }
           }
@@ -84,9 +89,14 @@ const House = () => {
         if (currentpage < totalpages) {
           const next = currentpage + 1;
           if (isGie) {
-            if (agId) {
+            const issingle = window.location.pathname.includes('of')
+            if(issingle){
+              history.push(`/houses/of/${userid}/${username}/${next}`)
+            }
+            if (agId&&!issingle) {
               history.push(`/houses/${selectedAgency}/${next}`);
-            } else {
+            } 
+            if(!agId&&!issingle){
               history.push(`/houses/${next}`);
             }
           }
@@ -113,10 +123,10 @@ const House = () => {
           
         }
         if(isAgency&&!issingle){
-          response = await getAllHousesByAgency(agencyId);
+          response = await getAllHousesByAgency(agencyId,page);
         }
         if(issingle) {
-        response = await getAllUserHouses(userid);
+        response = await getAllUserHouses(userid,page);
       }
       if (!response.error) {
         setAllHouses(response.data);

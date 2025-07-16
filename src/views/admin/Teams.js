@@ -366,7 +366,7 @@ const Teams = () => {
                               isview={isGie}
                               isdelete={isAgency}
                               handleedit={() => {
-                                history.push(`/teams/${team._id}`);
+                                history.push(`/team/${team._id}`);
                               }}
                               handleview={() => {
                                 history.push(`/teams/${team._id}`);

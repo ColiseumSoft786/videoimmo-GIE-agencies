@@ -84,8 +84,8 @@ const App = () => {
         <Route path="/teams/filtered/:agId/:page" exact render={() => <Admin children={<Teams />} />} />
         <Route path="/teams/searched/:teamid" exact render={() => <Admin children={<Teams />} />} />
         {/* <Route path="/teams/:agId" exact render={() => <Admin children={<Teams />} />} /> */}
-        <Route path='/teams/:id' exact render={()=><Admin children={<EditTeamModal/>}/>}></Route>
-        <Route path='/houses/of/:userid/:username' exact render={()=><Admin children={<House/>}/>}></Route>
+        <Route path='/team/:id' exact render={()=><Admin children={<EditTeamModal/>}/>}></Route>
+        <Route path='/houses/of/:userid/:username/:page' exact render={()=><Admin children={<House/>}/>}></Route>
         <Route path='/houses/:page' exact render={()=><Admin children={<House/>}/>}></Route>
         <Route path='/houses/:agId/:page' exact render={()=><Admin children={<House/>}/>}></Route>
         {/* Public and Auth pages */}

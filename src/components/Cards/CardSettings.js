@@ -62,32 +62,41 @@ export default function CardSettings() {
       }
     }
   }
-   const handleImageUpload = async() => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
+   const handleImageUpload = async () => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-      const reader = new FileReader();
-      reader.onloadend = async() => {
-        const base64String = reader.result.split(",")[1];
-        const requestbody = { 
-          name:file.name,
-          image:base64String,
-          id:agencyId }
-        const response = await updateAgencyImage(requestbody)
-        if(!response.error){
-          setagencyimage(response.data.image)
-          localStorage.setItem('agencyimage',response.data.image)
-          history.push('/dashboard')
-        }
+    const sizeInMB = file.size / (1024 * 1024);
+    console.log('this is the image',file)
+    if (sizeInMB > 5) {
+      toastService.warn("Image cannot be greater than 1024 MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64String = reader.result.split(",")[1];
+      const requestbody = {
+        name: file.name,
+        image: base64String,
+        id: agencyId,
       };
-      reader.readAsDataURL(file);
+      const response = await updateAgencyImage(requestbody);
+      if (!response.error) {
+        setagencyimage(response.data.image);
+        localStorage.setItem("agencyimage", response.data.image);
+        history.push("/dashboard");
+      }
     };
-    input.click(); // open file dialog
+    reader.readAsDataURL(file);
   };
+  input.click(); // open file dialog
+};
+
   useEffect(()=>{
     setName(giename?giename:agencyname)
     setmobileno(mobile?mobile:'')

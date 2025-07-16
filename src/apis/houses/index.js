@@ -7,9 +7,9 @@ import { DELETE_HOUSE_BY_AGENCY } from "apis/apiurls"
 import { GET_ALL_HOUSES_BY_AGENCY } from "apis/apiurls"
 import { GET_USER_HOUSES } from "apis/apiurls"
 
-export const getAllUserHouses = async(id)=>{
+export const getAllUserHouses = async(id,page)=>{
     try {
-        const path = GET_USER_HOUSES+id
+        const path = GET_USER_HOUSES+id+`/${page}`
         const response = await getAPI(path,true)
         console.log('response from get user houses',response)
         return response

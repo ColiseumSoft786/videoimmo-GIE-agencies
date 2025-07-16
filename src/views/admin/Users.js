@@ -388,7 +388,7 @@ const Users = () => {
                             <button
                               onClick={() => {
                                 history.push(
-                                  `/houses/of/${user._id}/${user.fname}`
+                                  `/houses/of/${user._id}/${user.fname}/1`
                                 );
                               }}
                               className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
