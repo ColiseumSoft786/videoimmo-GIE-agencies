@@ -21,13 +21,15 @@ import { deleteHouseByAgency } from "apis/houses";
 import ViewHouseModal from "views/Modals/ViewHouseModal";
 import { getHousesByGie } from "apis/houses";
 import { getAllAgenciesNames } from "apis/agency";
+import { gethouselengthbyagency } from "apis/houses";
+import { gethouselengthbygie } from "apis/houses";
 
 const House = () => {
   const color = "light";
   const history = useHistory()
   const location = useLocation()
-  const { userid, username } = useParams();
-  const {agId} = useParams()
+  const { userid, username ,agId,page} = useParams();
+  console.log('this is agency id in houses',agId)
   const isGie = useSelector((state) => state.login.isGie);
   const isAgency = useSelector((state) => state.login.isAgency);
   const gieId = isGie
@@ -40,23 +42,80 @@ const House = () => {
   const [housetoview, sethousetoview] = useState(null);
   const [selectedAgency, setSelectedAgency] = useState("");
     const [allagencies, setallagencies] = useState([]);
+     const [currentpage, setcurrentpage] = useState(Number(page));
+      const [totalpages, settotalpages] = useState(0);
+      const [totalitems, settotalitems] = useState(0);
+      const getpages = async () => {
+        let pages = null;
+        if (isGie) {
+          if (agId) {
+            pages = await gethouselengthbyagency(agId);
+          } else {
+            pages = await gethouselengthbygie(gieId);
+          }
+        }
+        if (isAgency) {
+          pages = await gethouselengthbyagency(agencyId);
+        }
+        if (!pages?.error) {
+          settotalitems(Number(pages?.data));
+          settotalpages(Math.ceil(pages?.data / 20));
+        } else {
+          settotalitems(0);
+          settotalpages(1);
+        }
+      };
+      const handleprev = () => {
+        if (currentpage > 1) {
+          const prev = currentpage - 1;
+          if (isGie) {
+            if (agId) {
+              history.push(`/houses/agency/${selectedAgency}/${prev}`);
+            } else {
+              history.push(`/houses/${prev}`);
+            }
+          }
+          if (isAgency) {
+            history.push(`/houses/${prev}`);
+          }
+        }
+      };
+      const handlenext = () => {
+        if (currentpage < totalpages) {
+          const next = currentpage + 1;
+          if (isGie) {
+            if (agId) {
+              history.push(`/houses/${selectedAgency}/${next}`);
+            } else {
+              history.push(`/houses/${next}`);
+            }
+          }
+          if (isAgency) {
+            history.push(`/houses/${next}`);
+          }
+        }
+      };
+      useEffect(() => {
+        setcurrentpage(Number(page));
+      }, [page]);
   const handleGetAllHouses = async () => {
     try {
       let response = {};
       setisloading(true);
-      if (window.location.pathname==='/houses') {
-        if(isGie){
+      const issingle = window.location.pathname.includes('of')
+        if(isGie && !issingle){
           if(agId){
-            response = await getAllHousesByAgency(agId)
-          }else{
-            response = await getHousesByGie(gieId);
+            response = await getAllHousesByAgency(agId,page)
+          }
+          if(!agId){
+            response = await getHousesByGie(gieId,page);
           }
           
         }
-        if(isAgency){
+        if(isAgency&&!issingle){
           response = await getAllHousesByAgency(agencyId);
         }
-      } else {
+        if(issingle) {
         response = await getAllUserHouses(userid);
       }
       if (!response.error) {
@@ -78,9 +137,11 @@ const House = () => {
     if(isGie){
       handleGetAllAgencyNames()
     }
+    if(isGie||isAgency){
     handleGetAllHouses();
+    getpages()}
   }
-  }, [location]);
+  }, [location,isGie,isAgency]);
   const handledeleteclick = async (id) => {
     const response = await deleteHouseByAgency(id);
     if (!response.error) {
@@ -97,7 +158,7 @@ const House = () => {
   };
   const handlefilterclick = () => {
     if (selectedAgency.trim() !== "") {
-      history.push(`/houses/${selectedAgency}`);
+      history.push(`/houses/${selectedAgency}/1`);
     }
   };
   return (
@@ -119,7 +180,7 @@ const House = () => {
                       (color === "light" ? "text-blueGray-700" : "text-white")
                     }
                   >
-                    {window.location.pathname==='/houses' ? "Houses" : `Houses of ${username}`}
+                    {window.location.pathname.includes('of') ? `Houses of ${username}`:"Houses"}
                   </h3>
                   <div
                     style={{
@@ -161,7 +222,7 @@ const House = () => {
                         </button>
                         <button
                           onClick={() => {
-                            history.push("/houses");
+                            history.push("/houses/1");
                             setSelectedAgency('')
                           }}
                           className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
@@ -337,7 +398,7 @@ const House = () => {
                               isview={true}
                               isdelete={true}
                               handledelete={() => handledeleteclick(house._id)}
-                              handleview={handleViewClick(house)}
+                              handleview={()=>handleViewClick(house)}
                             />
                           </td>
                         </tr>
@@ -348,6 +409,42 @@ const House = () => {
               </div>
             )}
           </div>
+                    {!isloading &&
+            totalitems > 20 &&
+            !window.location.pathname.includes("searched") && (
+              <div
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  justifyContent: "center",
+                  gap: "20px",
+                }}
+              >
+                <button
+                  disabled={currentpage === 1}
+                  className={`bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 ${
+                    currentpage === 1 ? "opacity-50" : "active:bg-blueGray-600"
+                  }`}
+                  onClick={handleprev}
+                >
+                  Prev
+                </button>
+                <div className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150">
+                  {currentpage}
+                </div>
+                <button
+                  disabled={currentpage === totalpages}
+                  className={`bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 ${
+                    currentpage === totalpages
+                      ? "opacity-50"
+                      : "active:bg-blueGray-600"
+                  }`}
+                  onClick={handlenext}
+                >
+                  next
+                </button>
+              </div>
+            )}
         </div>
       </div>
       {isviewing && (

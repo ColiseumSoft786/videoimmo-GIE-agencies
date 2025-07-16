@@ -2,20 +2,31 @@ import React, { useEffect, useState } from "react";
 
 import UserDropdown from "components/Dropdowns/UserDropdown.js";
 import { useDispatch, useSelector } from "react-redux";
-import { setsearchtext } from "utils/ReduxSlices/LoginSlice";
+import { getAllGieUsernames } from "apis/users";
+import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { getAllUsersNamesByAgency } from "apis/users";
+import { getAllGieTeamsNames } from "apis/teams";
+import { getAllAgencyTeamsNames } from "apis/teams";
+import { getAllAgenciesNames } from "apis/agency";
 
 export default function Navbar() {
   const dispatch = useDispatch();
-  const searchText = useSelector((state) => state.login.searchText);
+  const location = useLocation()
+  const history = useHistory()
   const isGie = useSelector((state) => state.login.isGie);
+  const isAgency = useSelector((state)=>state.login.isAgency)
   const [isexpired,setisexpired] = useState(false)
   const expiry = localStorage.getItem("expiry");
   const giename = localStorage.getItem("giename");
   const agencyname = localStorage.getItem("agencyname");
+  const gieId = isGie
+    ? localStorage.getItem("gie_id")
+    : localStorage.getItem("parent_gie");
+  const agencyId = isAgency ? localStorage.getItem("agency_id") : "";
   const [userName, setUserName] = useState("");
-  const handlechangesearchtext = (text) => {
-    dispatch(setsearchtext(text));
-  };
+  const [searchText,setSearchText] = useState('');
+  const [listitems,setlistitems] = useState([])
+  const [listitemstoshow,setlistitemstoshow] = useState([])
   useEffect(() => {
     setUserName(giename ? giename : agencyname);
   }, [giename, agencyname]);
@@ -24,6 +35,51 @@ export default function Navbar() {
       setisexpired(true)
     }
   },[])
+   const handlegetlistitems = async()=>{
+    let items = []
+    if(window.location.pathname.includes('users')&&isGie){
+      items = await getAllGieUsernames(gieId)
+    }
+    if(window.location.pathname.includes('users')&&isAgency){
+      items = await getAllUsersNamesByAgency(agencyId)
+    }
+    if(window.location.pathname.includes('teams')&&isGie){
+      items = await getAllGieTeamsNames(gieId)
+    }
+    if(window.location.pathname.includes('teams')&&isAgency){
+      items = await getAllAgencyTeamsNames(agencyId)
+    }
+    if(window.location.pathname.includes('agencies')&&isGie){
+      items = await getAllAgenciesNames(gieId)
+    }
+    if(!items.error){
+      setlistitems(items.data)
+      setlistitemstoshow(items.data)
+    }
+  }
+  useEffect(()=>{
+    handlegetlistitems()
+    setSearchText('')
+  },[location,isGie,isAgency])
+  useEffect(()=>{
+    if(window.location.pathname.includes('users')){
+      setlistitemstoshow(listitems.filter((item)=>item.fname.toLowerCase().includes(searchText.toLowerCase())))
+    }else{
+      setlistitemstoshow(listitems.filter((item)=>item.name.toLowerCase().includes(searchText.toLowerCase())))
+    }
+  },[searchText])
+  const handlesuggestionclick = (id)=>{
+    if(window.location.pathname.includes('users')){
+      history.push(`/users/searched/${id}`)
+    }
+    if(window.location.pathname.includes('agencies')){
+      history.push(`/agencies/searched/${id}`)
+    }
+    if(window.location.pathname.includes('teams')){
+      history.push(`/teams/searched/${id}`)
+    }
+    setSearchText('')
+  }
   return (
     <>
       {/* Navbar */}
@@ -51,9 +107,16 @@ export default function Navbar() {
                     type="text"
                     placeholder="Search here..."
                     value={searchText}
-                    onChange={(e) => handlechangesearchtext(e.target.value)}
+                    onChange={(e) => setSearchText(e.target.value)}
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"
                   />
+                  {searchText.trim()!==''&&<div style={{backgroundColor:'white',position:'absolute',top:'50px',left:'0',width:'315px',maxHeight:'40vw',overflowY:'scroll'}}>
+                {listitemstoshow.map((item,index)=>{
+                  return(
+                    <div onClick={()=>handlesuggestionclick(item._id)} style={{padding:'10px',textAlign:'left',cursor:'pointer'}} key={index}>{window.location.pathname.includes('users')?item.fname:item.name}</div>
+                  )
+                })}
+              </div>}
                 </div>
               </form>
             )}

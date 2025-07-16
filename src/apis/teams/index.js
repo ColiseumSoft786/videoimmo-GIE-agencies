@@ -3,6 +3,10 @@ import { deleteAPI } from "apis"
 import { postAPI } from "apis"
 import { getAPI } from "apis"
 import { GET_MANAGER_TEAM } from "apis/apiurls"
+import { GET_GIE_TEAMS_NAMES } from "apis/apiurls"
+import { GET_ALL_GIE_TEAMS_LENGTH } from "apis/apiurls"
+import { GET_ALL_AGENCY_TEAMS_LENGTH } from "apis/apiurls"
+import { GET_AGENCY_TEAMS_NAMES } from "apis/apiurls"
 import { GET_ALL_GIE_TEAMS } from "apis/apiurls"
 import { DELETE_TEAM_BY_AGENCY } from "apis/apiurls"
 import { UPDATE_TEAM_MANAGERS } from "apis/apiurls"
@@ -11,9 +15,9 @@ import { UPDATE_TEAM_MEMBERS } from "apis/apiurls"
 import { ADD_TEAM_BY_AGENCY } from "apis/apiurls"
 import { GET_ALL_TEAMS_BY_AGENCY } from "apis/apiurls"
 
-export const getAllTeams = async(id)=>{
+export const getAllTeams = async(id,page)=>{
     try {
-        const path = GET_ALL_TEAMS_BY_AGENCY+id
+        const path = GET_ALL_TEAMS_BY_AGENCY+id+`/${page}`
         const response = await getAPI(path,true)
         console.log('response from get all teams ',response)
         return response
@@ -80,13 +84,53 @@ export const deleteTeamByAgency = async(id)=>{
         console.log('error in delete team by agency',error)
     }
 }
-export const getAllGieTeams = async(id)=>{
+export const getAllGieTeams = async(id,page)=>{
     try {
-        const path = GET_ALL_GIE_TEAMS+id
+        const path = GET_ALL_GIE_TEAMS+id+`/${page}`
         const response = await getAPI(path,true)
         console.log('response from get all gie teams',response)
         return response
     } catch (error) {
         console.log('error in get all gie teams',error)
+    }
+}
+export const getAllGieTeamsNames = async(id)=>{
+    try {
+        const path = GET_GIE_TEAMS_NAMES+id
+        const response = await getAPI(path,true)
+        console.log('response from get all gie teams names',response)
+        return response
+    } catch (error) {
+        console.log('error in get all gie teams names',error)
+    }
+}
+export const getAllAgencyTeamsNames = async(id)=>{
+    try {
+        const path = GET_AGENCY_TEAMS_NAMES+id
+        const response = await getAPI(path,true)
+        console.log('response from get all agency teams names',response)
+        return response
+    } catch (error) {
+        console.log('error in get all agency teams names',error)
+    }
+}
+export const getgieteamslength = async(id)=>{
+    try {
+        const path = GET_ALL_GIE_TEAMS_LENGTH+id
+        const response = await getAPI(path,true)
+        console.log('response from get all gie teams ',response)
+        return response
+    } catch (error) {
+        console.log('error in get gie teams length',error)
+    }
+}
+export const getagencyteamslength = async(id)=>{
+    try {
+        const path = GET_ALL_AGENCY_TEAMS_LENGTH
+        const response = await getAPI(path,true)
+        console.log('response from get agency teams length',response)
+        return response
+    } catch (error) {
+        console.log('error in get agency teams length',error)
     }
 }

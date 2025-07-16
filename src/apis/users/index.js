@@ -3,6 +3,8 @@ import { putAPI } from "apis"
 import { postAPI } from "apis"
 import { getAPI } from "apis"
 import { GET_OTHER_USERS_NAMES } from "apis/apiurls"
+import { GET_SINGLE_USER } from "apis/apiurls"
+import { GET_ALL_GIE_USER_NAMES } from "apis/apiurls"
 import { GET_ALL_USERS_NAMES_BY_AGENCY } from "apis/apiurls"
 import { EDIT_USER_BY_AGENCY } from "apis/apiurls"
 import { DELETE_USER_BY_AGENCY } from "apis/apiurls"
@@ -10,9 +12,9 @@ import { ADD_USER_BY_AGENCY } from "apis/apiurls"
 import { GET_ALL_GIE_USERS } from "apis/apiurls"
 import { GET_ALL_AGENCY_USERS } from "apis/apiurls"
 
-export const getAllUsersByAgencyId = async(id)=>{
+export const getAllUsersByAgencyId = async(id,page)=>{
     try {
-        const path = GET_ALL_AGENCY_USERS+id
+        const path = GET_ALL_AGENCY_USERS+id+`/${page}`
         const response = await getAPI(path,true)
         console.log('response from get user by agency id',response)
         return response
@@ -20,9 +22,9 @@ export const getAllUsersByAgencyId = async(id)=>{
         console.log("error in get all users by  agency id",error)
     }
 }
-export const getAllUserByGieId = async(id)=>{
+export const getAllUserByGieId = async(id,page)=>{
     try {
-        const path = GET_ALL_GIE_USERS+id
+        const path = GET_ALL_GIE_USERS+id+`/${page}`
         const response = await getAPI(path,true)
         console.log("response from get all user by gie id ",response)
         return response
@@ -77,5 +79,25 @@ export const getOtherUserNames = async(id,agency)=>{
         return response
     } catch (error) {
         console.log('error in get other user name ',error)
+    }
+}
+export const getAllGieUsernames = async(id)=>{
+    try {
+        const path = GET_ALL_GIE_USER_NAMES+id
+        const response = await getAPI(path,true)
+        console.log('response from get all gie user names',response)
+        return response
+    } catch (error) {
+        console.log('error in get all gie user names',error)
+    }
+}
+export const getsingleuserbygie = async(id)=>{
+    try {
+        const path = GET_SINGLE_USER+id
+        const response = await getAPI(path,true)
+        console.log('response from get single user',response)
+        return response
+    } catch (error) {
+        console.log('error in get all single user',error)
     }
 }

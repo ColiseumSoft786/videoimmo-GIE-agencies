@@ -20,6 +20,7 @@ export default function Login() {
   const [otp, setotp] = useState("");
   const [timer, settimer] = useState(60);
   const handleSendOtp = async () => {
+    settimer(60)
     if (mobileno.slice(countrycode.length - 1).trim() === "") {
       toastService.warn("Please Enter Your Number");
       return;
@@ -29,6 +30,7 @@ export default function Login() {
       phone: mobileno.slice(countrycode.length - 1),
       countryCode: countrycode,
     };
+    console.log('body for send otp',requestbody)
     if (selected === "agency") {
       response = await sendAgencyOtp(requestbody);
     }
@@ -185,7 +187,7 @@ export default function Login() {
                       </label>
                       <PhoneInput
                         onChange={(value, data) => {
-                          setmobileno(value);
+                          setmobileno(`${value}`);
                           setcountrycode(`+${data.dialCode}`);
                         }}
                         country={"fr"}
@@ -238,6 +240,7 @@ export default function Login() {
                           }`}
                           type="button"
                           disabled={timer !== 0}
+                          onClick={handleSendOtp}
                         >
                           Resend OTP {timer !== 0 && `in ${timer}`}
                         </button>

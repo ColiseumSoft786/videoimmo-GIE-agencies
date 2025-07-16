@@ -8,33 +8,80 @@ import toastService from "utils/Toaster/toaster";
 import EditAgencyModal from "views/Modals/EditAgencyModal";
 import ViewAgencyModal from "views/Modals/ViewAgencyModal";
 import { useSelector } from "react-redux";
+import { getAllAgenciesLengthByGie } from "apis/dashboard";
+import { getsingleagency } from "apis/agency";
+import { useHistory, useLocation, useParams } from "react-router-dom/cjs/react-router-dom.min";
 const Agencies = () => {
   const color = "light";
-  const searchText = useSelector((state)=>state.login.searchText)
+  const {page,agid} = useParams()
+  const location = useLocation()
+  console.log(page)
+  const history = useHistory()
   const [isadding, setisadding] = useState(false);
   const [isloading, setisloading] = useState(true);
   const [allAgencies, setAllAgencies] = useState([]);
-  const [agencyToList,setAgencytoList] = useState([])
   const [agencytoview,setagencytoview] = useState(null)
   const [isediting, setisediting] = useState(false);
   const [isviewing, setisviewing] = useState(false);
+  const isGie = useSelector((state) => state.login.isGie);
+    const isAgency = useSelector((state) => state.login.isAgency);
   const GieId = localStorage.getItem("gie_id");
+       const [currentpage,setcurrentpage] = useState(Number(page))
+       const [totalpages,settotalpages] = useState(0)
+      const [totalitems,settotalitems] = useState(0)
+      const getpages = async()=>{
+        let pages = null
+        if (isGie) {
+            pages = await getAllAgenciesLengthByGie(GieId)
+            }
+        if(!pages?.error){
+          settotalitems(Number(pages?.data))
+          settotalpages(Math.ceil(pages?.data/20))
+        }else{
+          settotalitems(0)
+          settotalpages(1)
+        }
+      }
+      const handleprev=()=>{
+        if(currentpage>1){
+          const prev = currentpage-1
+              history.push(`/agencies/${prev}`)
+        }
+      }
+      const handlenext=()=>{
+        if(currentpage<totalpages){
+          const next = currentpage+1
+              history.push(`/agencies/${next}`)
+        }
+      }
+      useEffect(()=>{
+        setcurrentpage(Number(page))
+      },[page])
   console.log(GieId);
   const handleGetAllAgencies = async () => {
     setisloading(true);
     if (GieId) {
       console.log("this gie id going for agencies", GieId);
-      const response = await getAllAgencies(GieId);
+      const issearched = window.location.pathname.includes('searched')
+      let response = {}
+      if(issearched){
+        console.log('agency to fetch ',agid)
+        response = await getsingleagency(agid)
+      }else{
+      response = await getAllAgencies(GieId,page);}
       if (!response.error) {
-        setAllAgencies(response.data);
-        setAgencytoList(response.data)
+        if(issearched){
+          setAllAgencies([response.data])
+        }else{
+        setAllAgencies(response.data);}
         setisloading(false);
       }
     }
   };
   useEffect(() => {
     handleGetAllAgencies();
-  }, []);
+    getpages()
+  }, [location,isGie,isAgency]);
   const handleeditclick = async (agency) => {
     setagencytoview(agency)
     setisediting(true);
@@ -50,16 +97,6 @@ const Agencies = () => {
       handleGetAllAgencies()
     }
   };
-  const handlefilteragency = ()=>{
-    if(searchText===''){
-      setAgencytoList(allAgencies)
-    }else{
-      setAgencytoList(allAgencies.filter((agency)=>agency.name.toLowerCase().includes(searchText.toLowerCase())))
-    }
-  }
-  useEffect(()=>{
-    handlefilteragency()
-  },[searchText])
   return (
     <>
       <div className="flex flex-wrap mt-4">
@@ -157,7 +194,7 @@ const Agencies = () => {
                   </thead>
 
                   <tbody>
-                    {agencyToList.map((agency, index) => {
+                    {allAgencies.map((agency, index) => {
                       return (
                         <tr key={index}>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -207,6 +244,42 @@ const Agencies = () => {
               </div>
             )}
           </div>
+          {!isloading &&
+            totalitems > 20 &&
+            !window.location.pathname.includes("searched") && (
+              <div
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  justifyContent: "center",
+                  gap: "20px",
+                }}
+              >
+                <button
+                  disabled={currentpage === 1}
+                  className={`bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 ${
+                    currentpage === 1 ? "opacity-50" : "active:bg-blueGray-600"
+                  }`}
+                  onClick={handleprev}
+                >
+                  Prev
+                </button>
+                <div className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150">
+                  {currentpage}
+                </div>
+                <button
+                  disabled={currentpage === totalpages}
+                  className={`bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 ${
+                    currentpage === totalpages
+                      ? "opacity-50"
+                      : "active:bg-blueGray-600"
+                  }`}
+                  onClick={handlenext}
+                >
+                  next
+                </button>
+              </div>
+            )}
         </div>
       </div>
       {(isadding||isediting||isviewing) && (

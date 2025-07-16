@@ -1,4 +1,5 @@
 import { addAgency } from 'apis/agency'
+import { getgietokens } from 'apis/gie'
 import React, { useState } from 'react'
 import PhoneInput from 'react-phone-input-2'
 import toastService from 'utils/Toaster/toaster'
@@ -12,6 +13,11 @@ const AddAgencyModal = ({handleClose , GieId , handlefetch}) => {
         if(name.trim()===''||mobileno.trim()===''||countryCode.trim()===''){
             toastService.warn('All Fields Must Be Filled')
             return
+        }
+        const tokens = await getgietokens(GieId)
+        if(tokens.data.tokens===0){
+          toastService.warn('You are out of tokens')
+          return
         }
         const requestbody = {
             image:"",

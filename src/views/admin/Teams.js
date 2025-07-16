@@ -25,53 +25,116 @@ import {
 import { deleteTeamByAgency } from "apis/teams";
 import { getAllGieTeams } from "apis/teams";
 import { getAllAgenciesNames } from "apis/agency";
+import { getAllTeamsLengthByAgency } from "apis/dashboard";
+import { getAllTeamsLengthByGie } from "apis/dashboard";
+import { getTeamByManagerId } from "apis/teams";
 const Teams = () => {
   const color = "light";
-  const location = useLocation()
-  const { agId } = useParams();
+  const location = useLocation();
+  const { agId, page, teamid } = useParams();
   const history = useHistory();
   const isGie = useSelector((state) => state.login.isGie);
   const isAgency = useSelector((state) => state.login.isAgency);
-  const searchText = useSelector((state) => state.login.searchText);
   const gieId = isGie
     ? localStorage.getItem("gie_id")
     : localStorage.getItem("parent_gie");
   const agencyId = isAgency ? localStorage.getItem("agency_id") : "";
   const [isloading, setisloading] = useState(true);
   const [allTeams, setAllTeams] = useState([]);
-  const [teamsToList, setTeamsToList] = useState([]);
   const [isadding, setisadding] = useState(false);
   const [selectedAgency, setSelectedAgency] = useState("");
   const [allagencies, setallagencies] = useState([]);
+  const [currentpage, setcurrentpage] = useState(Number(page));
+  const [totalpages, settotalpages] = useState(0);
+  const [totalitems, settotalitems] = useState(0);
+  const getpages = async () => {
+    let pages = null;
+    if (isGie) {
+      if (agId) {
+        pages = await getAllTeamsLengthByAgency(agId);
+      } else {
+        pages = await getAllTeamsLengthByGie(gieId);
+      }
+    }
+    if (isAgency) {
+      pages = await getAllTeamsLengthByAgency(agencyId);
+    }
+    if (!pages?.error) {
+      settotalitems(Number(pages?.data));
+      settotalpages(Math.ceil(pages?.data / 20));
+    } else {
+      settotalitems(0);
+      settotalpages(1);
+    }
+  };
+  const handleprev = () => {
+    if (currentpage > 1) {
+      const prev = currentpage - 1;
+      if (isGie) {
+        if (agId) {
+          history.push(`/teams/agency/${selectedAgency}/${prev}`);
+        } else {
+          history.push(`/teams/${prev}`);
+        }
+      }
+      if (isAgency) {
+        history.push(`/teams/${prev}`);
+      }
+    }
+  };
+  const handlenext = () => {
+    if (currentpage < totalpages) {
+      const next = currentpage + 1;
+      if (isGie) {
+        if (agId) {
+          history.push(`/teams/agency/${selectedAgency}/${next}`);
+        } else {
+          history.push(`/teams/${next}`);
+        }
+      }
+      if (isAgency) {
+        history.push(`/teams/${next}`);
+      }
+    }
+  };
+  useEffect(() => {
+    setcurrentpage(Number(page));
+  }, [page]);
   const handleGetAllteams = async () => {
     try {
       setisloading(true);
       let response = {};
-      if (isGie) {
+      const issearched = window.location.pathname.includes("searched");
+      if (isGie&&!issearched) {
         if (agId) {
-          response = await getAllTeams(agId);
+          response = await getAllTeams(agId, page);
           if (!response.error) {
             setAllTeams(response.data);
-            setTeamsToList(response.data);
             setisloading(false);
           }
-        } else {
-          response = await getAllGieTeams(gieId);
+        }
+        if (!agId) {
+          response = await getAllGieTeams(gieId, page);
           if (!response.error) {
             setAllTeams(response.data);
-            setTeamsToList(response.data);
             setisloading(false);
           }
         }
       }
-      if (isAgency) {
-        response = await getAllTeams(agencyId);
+      if (isAgency&&!issearched) {
+        response = await getAllTeams(agencyId, page);
         if (!response.error) {
           setAllTeams(response.data);
-          setTeamsToList(response.data);
           setisloading(false);
         }
       }
+      if (issearched) {
+          response = await getTeamByManagerId(teamid);
+          if (!response.error) {
+            setAllTeams([response.data.data]);
+            setisloading(false);
+          }
+        }
     } catch (error) {
       console.log("error in fetching teams", error);
     }
@@ -83,12 +146,16 @@ const Teams = () => {
     }
   };
   useEffect(() => {
-    if(window.location.pathname.includes('teams')){
-    handleGetAllteams();
-    if (isGie) {
-      handleGetAllAgencyNames();
-    }}
-  }, [location]);
+    if (window.location.pathname.includes("teams")) {
+      handleGetAllteams();
+      if (isGie) {
+        handleGetAllAgencyNames();
+        if(agId){
+          setSelectedAgency(agId)
+        }
+      }
+    }
+  }, [location, isGie, isAgency]);
   const handledeleteclick = async (id) => {
     const response = await deleteTeamByAgency(id);
     if (!response.error) {
@@ -96,25 +163,11 @@ const Teams = () => {
       handleGetAllteams();
     }
   };
-  const handleTeamsFilter = () => {
-    if (searchText === "") {
-      setTeamsToList(allTeams);
-    } else {
-      setTeamsToList(
-        allTeams.filter((team) =>
-          team.name.toLowerCase().includes(searchText.toLowerCase())
-        )
-      );
-    }
-  };
   const handlefilterclick = () => {
     if (selectedAgency.trim() !== "") {
-      history.push(`/teams/filtered/${selectedAgency}`);
+      history.push(`/teams/filtered/${selectedAgency}/1`);
     }
   };
-  useEffect(() => {
-    handleTeamsFilter();
-  }, [searchText]);
   return (
     <>
       <div className="flex flex-wrap mt-4">
@@ -183,8 +236,8 @@ const Teams = () => {
                         </button>
                         <button
                           onClick={() => {
-                            history.push("/teams");
-                            setSelectedAgency('')
+                            history.push("/teams/1");
+                            setSelectedAgency("");
                           }}
                           className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                         >
@@ -275,7 +328,7 @@ const Teams = () => {
                   </thead>
 
                   <tbody>
-                    {teamsToList.map((team, index) => {
+                    {allTeams.map((team, index) => {
                       return (
                         <tr key={index}>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -286,7 +339,7 @@ const Teams = () => {
                           </td>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                             {team.managers.map((manager, index) => {
-                              return <span>({manager.fname})</span>
+                              return <span>({manager.fname})</span>;
                             })}
                           </td>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -329,6 +382,42 @@ const Teams = () => {
               </div>
             )}
           </div>
+          {!isloading &&
+            totalitems > 20 &&
+            !window.location.pathname.includes("searched") && (
+              <div
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  justifyContent: "center",
+                  gap: "20px",
+                }}
+              >
+                <button
+                  disabled={currentpage === 1}
+                  className={`bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 ${
+                    currentpage === 1 ? "opacity-50" : "active:bg-blueGray-600"
+                  }`}
+                  onClick={handleprev}
+                >
+                  Prev
+                </button>
+                <div className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150">
+                  {currentpage}
+                </div>
+                <button
+                  disabled={currentpage === totalpages}
+                  className={`bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 ${
+                    currentpage === totalpages
+                      ? "opacity-50"
+                      : "active:bg-blueGray-600"
+                  }`}
+                  onClick={handlenext}
+                >
+                  next
+                </button>
+              </div>
+            )}
         </div>
       </div>
       {isadding && (

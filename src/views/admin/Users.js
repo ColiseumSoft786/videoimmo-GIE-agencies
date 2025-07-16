@@ -16,61 +16,125 @@ import EditUserModal from "views/Modals/EditUserModal";
 import ViewUserModal from "views/Modals/ViewUserModal";
 import {
   useHistory,
-  useLocation,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
+import { useLocation } from "react-router-dom";
 import { getAllAgenciesNames } from "apis/agency";
+import { getAllUserLengthByAgency } from "apis/dashboard";
+import { getAllUserLengthByGie } from "apis/dashboard";
+import { getsingleuserbygie } from "apis/users";
 const Users = () => {
   const color = "light";
   const location = useLocation();
-  const { agId } = useParams();
-  console.log("this is selected agency", agId);
+  const { agId,page,userid } = useParams();
+  console.log("this is selected agency", agId,page,userid);
   const history = useHistory();
   const isGie = useSelector((state) => state.login.isGie);
   const isAgency = useSelector((state) => state.login.isAgency);
-  const searchtext = useSelector((state) => state.login.searchText);
   const gieId = isGie
     ? localStorage.getItem("gie_id")
     : localStorage.getItem("parent_gie");
   const agencyId = isAgency ? localStorage.getItem("agency_id") : "";
   const [isloading, setisloading] = useState(true);
   const [allUsers, setAllUsers] = useState([]);
-  const [userToList, setUserToList] = useState([]);
   const [isediting, setisEditing] = useState(false);
   const [isadding, setisadding] = useState(false);
   const [isviewing, setisviewing] = useState(false);
   const [usertoview, setusertoview] = useState(null);
   const [allagencies, setallagencies] = useState([]);
   const [selectedAgency, setSelectedAgency] = useState("");
+   const [currentpage,setcurrentpage] = useState(Number(page))
+   const [totalpages,settotalpages] = useState(0)
+  const [totalitems,settotalitems] = useState(0)
+  const getpages = async()=>{
+    let pages = null
+    if (isGie) {
+        if (agId) {
+         pages = await getAllUserLengthByAgency(agId)
+        } else {
+          pages = await getAllUserLengthByGie(gieId)
+          }
+        }
+      if (isAgency) {
+        pages = await getAllUserLengthByAgency(agencyId)
+      }
+    if(!pages?.error){
+      settotalitems(Number(pages?.data))
+      settotalpages(Math.ceil(pages?.data/20))
+    }else{
+      settotalitems(0)
+      settotalpages(1)
+    }
+  }
+  const handleprev=()=>{
+    if(currentpage>1){
+      const prev = currentpage-1
+      if (isGie) {
+        if (agId) {
+         history.push(`/users/agency/${selectedAgency}/${prev}`)
+        } else {
+          history.push(`/users/${prev}`)
+          }
+        }
+      if (isAgency) {
+        history.push(`/users/${prev}`)
+      }
+    }
+  }
+  const handlenext=()=>{
+    if(currentpage<totalpages){
+      const next = currentpage+1
+      if (isGie) {
+        if (agId) {
+         history.push(`/users/agency/${selectedAgency}/${next}`)
+        } else {
+          history.push(`/users/${next}`)
+          }
+        }
+      if (isAgency) {
+        history.push(`/users/${next}`)
+      }
+    }
+  }
+  useEffect(()=>{
+    setcurrentpage(Number(page))
+  },[page])
   const handleGetAllUsers = async () => {
     try {
       setisloading(true);
       let response = [];
-      if (isGie) {
+      const issearched = window.location.pathname.includes('searched')
+      if (isGie&&!issearched) {
         if (agId) {
-          response = await getAllUsersByAgencyId(agId);
+          response = await getAllUsersByAgencyId(agId,page);
           if (!response.error) {
             setAllUsers(response.data);
-            setUserToList(response.data);
             setisloading(false);
           }
-        } else {
-          response = await getAllUserByGieId(gieId);
+        }
+        if(!agId) {
+          response = await getAllUserByGieId(gieId,page);
           if (!response.error) {
             setAllUsers(response.data);
-            setUserToList(response.data);
             setisloading(false);
           }
         }
       }
-      if (isAgency) {
-        response = await getAllUsersByAgencyId(agencyId);
+      if (isAgency&&!issearched) {
+        response = await getAllUsersByAgencyId(agencyId,page);
         if (!response.error) {
           setAllUsers(response.data);
-          setUserToList(response.data);
           setisloading(false);
         }
       }
+      if(issearched){
+          console.log('this is user id ',userid)
+          response= await getsingleuserbygie(userid)
+          if (!response.error) {
+            setAllUsers([response.data]);
+            setisloading(false);
+          }
+        }
     } catch (error) {
       console.log("error in fetching users", error);
     }
@@ -83,12 +147,17 @@ const Users = () => {
   };
   useEffect(() => {
     if (window.location.pathname.includes("users")) {
+      console.log('use effect running on refresh ')
       handleGetAllUsers();
+      getpages()
       if (isGie) {
         handleGetAllAgencyNames();
       }
+      if(agId){
+        setSelectedAgency(agId)
+      }
     }
-  }, [location]);
+  }, [location,isAgency,isGie]);
   const handleeditclick = (user) => {
     setisEditing(true);
     setusertoview(user);
@@ -104,25 +173,11 @@ const Users = () => {
       handleGetAllUsers();
     }
   };
-  const HandleFilterUsers = () => {
-    if (searchtext === "") {
-      setUserToList(allUsers);
-    } else {
-      setUserToList(
-        allUsers.filter((user) =>
-          user.fname.toLowerCase().includes(searchtext.toLowerCase())
-        )
-      );
-    }
-  };
   const handlefilterclick = () => {
     if (selectedAgency.trim() !== "") {
-      history.push(`/users/${selectedAgency}`);
+      history.push(`/users/agency/${selectedAgency}/1`);
     }
   };
-  useEffect(() => {
-    HandleFilterUsers();
-  }, [searchtext]);
   return (
     <>
       <div className="flex flex-wrap mt-4">
@@ -142,7 +197,7 @@ const Users = () => {
                       (color === "light" ? "text-blueGray-700" : "text-white")
                     }
                   >
-                    Users
+                    Users {totalpages}
                   </h3>
                   <div
                     style={{
@@ -191,7 +246,7 @@ const Users = () => {
                         </button>
                         <button
                           onClick={() => {
-                            history.push("/users");
+                            history.push("/users/1");
                             setSelectedAgency('')
                           }}
                           className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
@@ -293,7 +348,7 @@ const Users = () => {
                   </thead>
 
                   <tbody>
-                    {userToList.map((user, index) => {
+                    {allUsers.map((user, index) => {
                       return (
                         <tr key={index}>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -333,7 +388,7 @@ const Users = () => {
                             <button
                               onClick={() => {
                                 history.push(
-                                  `/houses/${user._id}/${user.fname}`
+                                  `/houses/of/${user._id}/${user.fname}`
                                 );
                               }}
                               className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
@@ -361,6 +416,35 @@ const Users = () => {
               </div>
             )}
           </div>
+          {!isloading&&totalitems>20&&!window.location.pathname.includes('searched')&&<div style={{display:'flex',width:'100%',justifyContent:'center',gap:'20px'}}>
+           <button
+           disabled={currentpage===1}
+                        className={`bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 ${
+                            currentpage===1
+                              ? "opacity-50"
+                              : "active:bg-blueGray-600"
+                          }`}
+                        onClick={handleprev}
+                      >
+                        Prev
+                      </button>
+                       <div
+                        className="bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                      >
+                        {currentpage}
+                      </div>
+                       <button
+                       disabled={currentpage===totalpages}
+                        className={`bg-red-600 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 ${
+                            currentpage===totalpages
+                              ? "opacity-50"
+                              : "active:bg-blueGray-600"
+                          }`}
+                        onClick={handlenext}
+                      >
+                        next
+                      </button>
+        </div>}
         </div>
       </div>
       {(isadding || isediting || isviewing) && (

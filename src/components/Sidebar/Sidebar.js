@@ -140,7 +140,7 @@ export default function Sidebar() {
                       ? "text-red-600 hover:text-red-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
-                  to="/users"
+                  to="/users/1"
                 >
                   <i
                     className={
@@ -161,7 +161,7 @@ export default function Sidebar() {
                       ? "text-red-600 hover:text-red-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
-                  to="/teams"
+                  to="/teams/1"
                 >
                   <i
                     className={
@@ -182,7 +182,7 @@ export default function Sidebar() {
                       ? "text-red-600 hover:text-red-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
-                  to="/houses"
+                  to="/houses/1"
                 >
                   <i
                     className={
@@ -203,7 +203,7 @@ export default function Sidebar() {
                       ? "text-red-600 hover:text-red-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
-                  to="/agencies"
+                  to="/agencies/1"
                 >
                   <i
                     className={

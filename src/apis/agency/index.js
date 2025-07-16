@@ -3,6 +3,7 @@ import { putAPI } from "apis"
 import { getAPI } from "apis"
 import { postAPI } from "apis"
 import { UPLOAD_IMAGE_AGENCY } from "apis/apiurls"
+import { GET_SINGLE_AGENCY } from "apis/apiurls"
 import { UPDATE_AGENCY_DETAILS } from "apis/apiurls"
 import { DELETE_AGENCY } from "apis/apiurls"
 import { GET_ALL_AGENCY_NAMES } from "apis/apiurls"
@@ -19,9 +20,9 @@ export const addAgency = async(body) =>{
         console.log('error in get agencies',error)
     }
 }
-export const getAllAgencies = async(GieId)=>{
+export const getAllAgencies = async(GieId,page)=>{
     try {
-        const path = GIES_AGENCY+GieId
+        const path = GIES_AGENCY+GieId+`/${page}`
         const response = await getAPI(path,true)
         console.log('response from get all agencies',response)
         return response
@@ -76,5 +77,15 @@ export const updateAgencyImage = async(body)=>{
         return response
     } catch (error) {
         console.log('error in update agency image ',error)
+    }
+}
+export const getsingleagency = async(id)=>{
+    try {
+        const path = GET_SINGLE_AGENCY+id
+        const response = await getAPI(path,true)
+        console.log('response from get single agency',response)
+        return response
+    } catch (error) {
+        console.log('error in get single agency',error)
     }
 }
