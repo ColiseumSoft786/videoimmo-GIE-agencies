@@ -68,8 +68,8 @@ const House = () => {
       const handleprev = () => {
         if (currentpage > 1) {
           const prev = currentpage - 1;
+          const issingle = window.location.pathname.includes('of')
           if (isGie) {
-             const issingle = window.location.pathname.includes('of')
             if(issingle){
               history.push(`/houses/of/${userid}/${username}/${prev}`)
             }
@@ -81,15 +81,18 @@ const House = () => {
             }
           }
           if (isAgency) {
-            history.push(`/houses/${prev}`);
+            if(issingle){
+              history.push(`/houses/of/${userid}/${username}/${prev}`)
+            }else{
+            history.push(`/houses/${prev}`);}
           }
         }
       };
       const handlenext = () => {
         if (currentpage < totalpages) {
           const next = currentpage + 1;
+          const issingle = window.location.pathname.includes('of')
           if (isGie) {
-            const issingle = window.location.pathname.includes('of')
             if(issingle){
               history.push(`/houses/of/${userid}/${username}/${next}`)
             }
@@ -101,7 +104,10 @@ const House = () => {
             }
           }
           if (isAgency) {
-            history.push(`/houses/${next}`);
+            if(issingle){
+              history.push(`/houses/of/${userid}/${username}/${next}`)
+            }else{
+            history.push(`/houses/${next}`);}
           }
         }
       };

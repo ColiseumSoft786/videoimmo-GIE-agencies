@@ -98,7 +98,7 @@ export default function Dashboard() {
                   (color === "light" ? "text-blueGray-700" : "text-white")
                 }
               >
-                Tokens Used
+                Tokens Used ({allTransactions.length})
               </h3>
             </div>
           </div>
