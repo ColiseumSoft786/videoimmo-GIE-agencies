@@ -21,6 +21,7 @@ import AddManagerModal from "./AddManagerModal";
 import AddMemberModal from "./AddMemberModal";
 import { updateTeamMembersByAgency } from "apis/teams";
 import { updateTeamManagersByAgency } from "apis/teams";
+import ConfirmModal from "./ConfirmModal";
 const EditTeamModal = () => {
   const color = "light";
   const isGie = useSelector((state) => state.login.isGie);
@@ -37,6 +38,9 @@ const EditTeamModal = () => {
   const [isediting, setisEditing] = useState(false);
   const [isManagerAdd,setisManagerAdd] = useState(false)
   const [isMemberAdd,setIsMemberAdd] = useState(false)
+  const [managerconfirm,setmanagerconfirm] = useState(false)
+  const [memberconfirm,setmemberconfirm] = useState(false)
+  const [deleteid,setdeleteid] = useState('')
   const handleGetManagerTeam = async () => {
     try {
       setisloading(true);
@@ -68,15 +72,25 @@ const EditTeamModal = () => {
           if(!response.error){
               toastService.success('Member Removed Successfully')
               handleGetManagerTeam()
+              setmemberconfirm(false)
           }
     }
+  const handleremovememberclick = (memberid)=>{
+    setdeleteid(memberid)
+    setmemberconfirm(true)
+  }
   const handleRemoveManager = async(managerid)=>{
     const requestbody = mainTeam.managers.filter((manager)=>manager._id!==managerid)
     const response = await updateTeamManagersByAgency(requestbody,mainTeam._id)
     if(!response.error){
         toastService.success('Manager Removed Successfully')
         handleGetManagerTeam()
+        setmanagerconfirm(false)
     }
+  }
+  const handleremovemanagerclick = (managerid)=>{
+    setdeleteid(managerid)
+    setmanagerconfirm(true)
   }
   return (
     <>
@@ -251,7 +265,7 @@ const EditTeamModal = () => {
                                 handleedit={{}}
                                 handleview={{}}
                                 handledelete={() =>
-                                  handleRemoveManager(manager._id)
+                                  handleremovemanagerclick(manager._id)
                                 }
                               />
                             </td>}
@@ -386,7 +400,7 @@ const EditTeamModal = () => {
                                 handleedit={{}}
                                 handleview={{}}
                                 handledelete={() =>
-                                  handleRemoveMember(manager._id)
+                                  handleremovememberclick(manager._id)
                                 }
                               />
                             </td>}
@@ -401,7 +415,7 @@ const EditTeamModal = () => {
           </div>
         </div>
       )}
-      {(isediting||isManagerAdd||isMemberAdd) && (
+      {(isediting||isManagerAdd||isMemberAdd||managerconfirm||memberconfirm) && (
         <div
           style={{
             height: "100vh",
@@ -419,6 +433,8 @@ const EditTeamModal = () => {
           {isManagerAdd&&<AddManagerModal handleClose={()=>setisManagerAdd(false)}Team={mainTeam} handlefetch={handleGetManagerTeam}/>}
           {isMemberAdd&&<AddMemberModal handleClose={()=>setIsMemberAdd(false)}Team={mainTeam} handlefetch={handleGetManagerTeam}/>}
           {isediting&&<EditTeamNameModal handleClose={()=>setisEditing(false)} teamtoEdit={mainTeam} handlefetch={handleGetManagerTeam}/>}
+          {managerconfirm&&<ConfirmModal handleClose={()=>setmanagerconfirm(false)} handleAction={()=>handleRemoveManager(deleteid)}/>}
+          {memberconfirm&&<ConfirmModal handleClose={()=>setmemberconfirm(false)} handleAction={()=>handleRemoveMember(deleteid)}/>}
         </div>
       )}
     </>

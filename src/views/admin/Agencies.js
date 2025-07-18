@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { getAllAgenciesLengthByGie } from "apis/dashboard";
 import { getsingleagency } from "apis/agency";
 import { useHistory, useLocation, useParams } from "react-router-dom/cjs/react-router-dom.min";
+import ConfirmModal from "views/Modals/ConfirmModal";
 const Agencies = () => {
   const color = "light";
   const {page,agid} = useParams()
@@ -23,6 +24,8 @@ const Agencies = () => {
   const [agencytoview,setagencytoview] = useState(null)
   const [isediting, setisediting] = useState(false);
   const [isviewing, setisviewing] = useState(false);
+  const [isconfirm ,setisconfirm] = useState(false)
+  const [deleteid,setdeleteid] = useState('')
   const isGie = useSelector((state) => state.login.isGie);
     const isAgency = useSelector((state) => state.login.isAgency);
   const GieId = localStorage.getItem("gie_id");
@@ -90,12 +93,17 @@ const Agencies = () => {
     setagencytoview(agency)
     setisviewing(true);
   };
-  const handledeleteclick = async(id) => {
+  const handledeleteagency = async(id)=>{
     const response = await deleteAgency(id)
     if(!response.error){
       toastService.success("Agency Deleted Successfully")
       handleGetAllAgencies()
+      setisconfirm(false)
     }
+  }
+  const handledeleteclick = (id) => {
+    setdeleteid(id)
+    setisconfirm(true)
   };
   return (
     <>
@@ -282,7 +290,7 @@ const Agencies = () => {
             )}
         </div>
       </div>
-      {(isadding||isediting||isviewing) && (
+      {(isadding||isediting||isviewing||isconfirm) && (
         <div
           style={{
             height: "100vh",
@@ -315,6 +323,12 @@ const Agencies = () => {
             <ViewAgencyModal
             handleClose={()=>setisviewing(false)}
             agencytoview={agencytoview}
+            />
+          )}
+          {isconfirm && (
+            <ConfirmModal
+            handleClose={()=>setisconfirm(false)}
+            handleAction = {()=>handledeleteagency(deleteid)}
             />
           )}
         </div>

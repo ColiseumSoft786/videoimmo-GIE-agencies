@@ -23,6 +23,7 @@ import { getAllAgenciesNames } from "apis/agency";
 import { getAllUserLengthByAgency } from "apis/dashboard";
 import { getAllUserLengthByGie } from "apis/dashboard";
 import { getsingleuserbygie } from "apis/users";
+import ConfirmModal from "views/Modals/ConfirmModal";
 const Users = () => {
   const color = "light";
   const location = useLocation();
@@ -46,6 +47,8 @@ const Users = () => {
    const [currentpage,setcurrentpage] = useState(Number(page))
    const [totalpages,settotalpages] = useState(0)
   const [totalitems,settotalitems] = useState(0)
+  const [isconfirm,setisconfirm] = useState(false)
+  const [deleteid,setdeleteid] = useState('')
   const getpages = async()=>{
     let pages = null
     if (isGie) {
@@ -166,12 +169,17 @@ const Users = () => {
     setisviewing(true);
     setusertoview(user);
   };
-  const handledeleteclick = async (id) => {
+  const handledeleteuser = async(id)=>{
     const response = await deleteUser(id);
     if (!response.error) {
       toastService.success("User Deleted Successfully");
       handleGetAllUsers();
+      setisconfirm(false)
     }
+  }
+  const handledeleteclick = (id) => {
+    setdeleteid(id)
+    setisconfirm(true)
   };
   const handlefilterclick = () => {
     if (selectedAgency.trim() !== "") {
@@ -398,9 +406,9 @@ const Users = () => {
                           </td>
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-right">
                             <TableDropdown
-                              isedit={true}
+                              isedit={isAgency}
                               isview={true}
-                              isdelete={true}
+                              isdelete={isAgency}
                               handleedit={() => handleeditclick(user)}
                               handleview={() => handleviewclick(user)}
                               handledelete={() =>
@@ -447,7 +455,7 @@ const Users = () => {
         </div>}
         </div>
       </div>
-      {(isadding || isediting || isviewing) && (
+      {(isadding || isediting || isviewing || isconfirm) && (
         <div
           style={{
             height: "100vh",
@@ -484,6 +492,9 @@ const Users = () => {
               handleClose={() => setisviewing(false)}
               Usertoview={usertoview}
             />
+          )}
+          {isconfirm && (
+            <ConfirmModal handleClose={()=>setisconfirm(false)} handleAction={()=>handledeleteuser(deleteid)}/>
           )}
         </div>
       )}

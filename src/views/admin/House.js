@@ -23,6 +23,7 @@ import { getHousesByGie } from "apis/houses";
 import { getAllAgenciesNames } from "apis/agency";
 import { gethouselengthbyagency } from "apis/houses";
 import { gethouselengthbygie } from "apis/houses";
+import ConfirmModal from "views/Modals/ConfirmModal";
 
 const House = () => {
   const color = "light";
@@ -45,6 +46,8 @@ const House = () => {
      const [currentpage, setcurrentpage] = useState(Number(page));
       const [totalpages, settotalpages] = useState(0);
       const [totalitems, settotalitems] = useState(0);
+      const [isconfirm,setisconfirm] = useState(false)
+      const [deleteid,setdeleteid] = useState('')
       const getpages = async () => {
         let pages = null;
         if (isGie) {
@@ -158,12 +161,17 @@ const House = () => {
     getpages()}
   }
   }, [location,isGie,isAgency]);
-  const handledeleteclick = async (id) => {
+  const handledeletehouse = async(id)=>{
     const response = await deleteHouseByAgency(id);
     if (!response.error) {
       toastService.success("House Deleted Successfully");
       handleGetAllHouses();
+      setisconfirm(false)
     }
+  }
+  const handledeleteclick = (id) => {
+    setdeleteid(id)
+    setisconfirm(true)
   };
   const getHouseTimestamp = (createdAt) => {
     return new Date(createdAt).getTime(); // or .valueOf()
@@ -463,7 +471,7 @@ const House = () => {
             )}
         </div>
       </div>
-      {isviewing && (
+      {(isviewing || isconfirm) && (
         <div
           style={{
             height: "100vh",
@@ -482,6 +490,12 @@ const House = () => {
             <ViewHouseModal
               handleClose={() => setisviewing(false)}
               Housetoview={housetoview}
+            />
+          )}
+          {isconfirm && (
+            <ConfirmModal
+              handleClose={()=>setisconfirm(false)}
+              handleAction = {()=>handledeletehouse(deleteid)}
             />
           )}
         </div>
