@@ -28,6 +28,7 @@ import Agencies from "views/admin/Agencies";
 import Teams from "views/admin/Teams";
 import EditTeamModal from "views/Modals/EditTeamModal";
 import House from "views/admin/House";
+import './App.css'
 
 const App = () => {
   const dispatch = useDispatch();

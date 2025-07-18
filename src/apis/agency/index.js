@@ -3,6 +3,7 @@ import { putAPI } from "apis"
 import { getAPI } from "apis"
 import { postAPI } from "apis"
 import { UPLOAD_IMAGE_AGENCY } from "apis/apiurls"
+import { GET_RECENT_AGENCIES } from "apis/apiurls"
 import { GET_SINGLE_AGENCY } from "apis/apiurls"
 import { UPDATE_AGENCY_DETAILS } from "apis/apiurls"
 import { DELETE_AGENCY } from "apis/apiurls"
@@ -87,5 +88,15 @@ export const getsingleagency = async(id)=>{
         return response
     } catch (error) {
         console.log('error in get single agency',error)
+    }
+}
+export const getRecentAgenciesforGie = async(id)=>{
+    try {
+        const path = GET_RECENT_AGENCIES+id
+        const response = await getAPI(path,true)
+        console.log('response from get recent agencies by gie',response)
+        return response
+    } catch (error) {
+        console.log('error in get recent agencies for gie',error)
     }
 }

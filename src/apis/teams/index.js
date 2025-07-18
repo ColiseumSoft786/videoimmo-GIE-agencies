@@ -5,6 +5,7 @@ import { getAPI } from "apis"
 import { GET_MANAGER_TEAM } from "apis/apiurls"
 import { GET_GIE_TEAMS_NAMES } from "apis/apiurls"
 import { GET_ALL_GIE_TEAMS_LENGTH } from "apis/apiurls"
+import { GET_RECENT_TEAMS } from "apis/apiurls"
 import { GET_ALL_AGENCY_TEAMS_LENGTH } from "apis/apiurls"
 import { GET_AGENCY_TEAMS_NAMES } from "apis/apiurls"
 import { GET_ALL_GIE_TEAMS } from "apis/apiurls"
@@ -132,5 +133,25 @@ export const getagencyteamslength = async(id)=>{
         return response
     } catch (error) {
         console.log('error in get agency teams length',error)
+    }
+}
+export const getRecentTeamsForGie = async(id)=>{
+    try {
+        const path = GET_RECENT_TEAMS+id+'/null'
+        const response = await getAPI(path,true)
+        console.log('response from get recent teams for gie',response)
+        return response
+    } catch (error) {
+        console.log('error in get recent teams for gie',error)
+    }
+}
+export const getRecentTeamsforAgency = async(id)=>{
+    try {
+        const path = GET_RECENT_TEAMS+'null'+`/${id}`
+        const response = await getAPI(path,true)
+        console.log('response from get recent teams for agency',response)
+        return response
+    } catch (error) {
+        console.log('error in get recent teams for agency',error)
     }
 }

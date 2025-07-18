@@ -42,3 +42,7 @@ export const GET_SINGLE_USER = process.env.REACT_APP_ENDPOINT + 'user/getsingleu
 export const GET_SINGLE_AGENCY = process.env.REACT_APP_ENDPOINT + 'agency/profile/'
 export const GET_GIE_TEAMS_NAMES  = process.env.REACT_APP_ENDPOINT + 'user/gieteamsnames/'
 export const GET_AGENCY_TEAMS_NAMES = process.env.REACT_APP_ENDPOINT + 'user/agencyteamsnames/'
+export const GET_GIE_TOKENS_TRANSACTION = process.env.REACT_APP_ENDPOINT + 'tokentransaction/get/'
+export const GET_RECENT_USERS = process.env.REACT_APP_ENDPOINT + 'user/recentusers/'
+export const GET_RECENT_TEAMS = process.env.REACT_APP_ENDPOINT + 'user/recentteams/'
+export const GET_RECENT_AGENCIES = process.env.REACT_APP_ENDPOINT + 'agency/recentagencies/'

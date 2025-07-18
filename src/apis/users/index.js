@@ -4,6 +4,7 @@ import { postAPI } from "apis"
 import { getAPI } from "apis"
 import { GET_OTHER_USERS_NAMES } from "apis/apiurls"
 import { GET_SINGLE_USER } from "apis/apiurls"
+import { GET_RECENT_USERS } from "apis/apiurls"
 import { GET_ALL_GIE_USER_NAMES } from "apis/apiurls"
 import { GET_ALL_USERS_NAMES_BY_AGENCY } from "apis/apiurls"
 import { EDIT_USER_BY_AGENCY } from "apis/apiurls"
@@ -99,5 +100,25 @@ export const getsingleuserbygie = async(id)=>{
         return response
     } catch (error) {
         console.log('error in get all single user',error)
+    }
+}
+export const getRecentUsersForGie = async(id)=>{
+    try {
+        const path = GET_RECENT_USERS+id+'/null'
+        const response = await getAPI(path,true)
+        console.log('response from get recent users for gie',response)
+        return response
+    } catch (error) {
+        console.log('error in get recent user for gie',error)
+    }
+}
+export const getRecentUsersforAgency = async(id)=>{
+    try {
+        const path = GET_RECENT_USERS+'null'+`/${id}`
+        const response = await getAPI(path,true)
+        console.log('response from get recent users for agency',response)
+        return response
+    } catch (error) {
+        console.log('error in get recent users for agency',error)
     }
 }

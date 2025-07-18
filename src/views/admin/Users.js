@@ -197,7 +197,7 @@ const Users = () => {
                       (color === "light" ? "text-blueGray-700" : "text-white")
                     }
                   >
-                    Users {totalpages}
+                    Users 
                   </h3>
                   <div
                     style={{
