@@ -46,10 +46,11 @@ export default function Dashboard() {
   }
   const handlegetRecentTeams = async()=>{
     let teams = {}
-    if(isGie){
+    console.log('id for handlegetrecent teams',gieId)
+    if(isGie&&gieId){
       teams = await getRecentTeamsForGie(gieId)
     }
-    if(isAgency){
+    if(isAgency&&agencyId){
       teams = await getRecentTeamsforAgency(agencyId)
     }
     if(!teams.error){
@@ -59,10 +60,10 @@ export default function Dashboard() {
   }
   const handleGetRecentUsers = async()=>{
     let users ={}
-    if(isGie){
+    if(isGie&&gieId){
       users = await getRecentUsersForGie(gieId)
     }
-    if(isAgency){
+    if(isAgency&&agencyId){
       users = await getRecentUsersforAgency(agencyId)
     }
     if(!users.error){
@@ -72,12 +73,13 @@ export default function Dashboard() {
   }
   useEffect(()=>{
     setisloading(['transaction','user','team','agency'])
-    if(isGie){
+    if(isGie&&gieId){
       handlegetalltransactions()
       handleGetRecentAgencies()
     }
-    handlegetRecentTeams()
-    handleGetRecentUsers()
+    if(gieId||agencyId)
+    {handlegetRecentTeams()
+    handleGetRecentUsers()}
   },[isGie,location])
   return (
     <>
