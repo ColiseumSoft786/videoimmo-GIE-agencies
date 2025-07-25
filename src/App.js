@@ -83,7 +83,7 @@ const App = () => {
         {isGie&&<Route path="/agencies/searched/:agid" exact render={() => <Admin children={<Agencies />} />} />}
         <Route path="/teams/:page" exact render={() => <Admin children={<Teams />} />} />
         <Route path="/teams/filtered/:agId/:page" exact render={() => <Admin children={<Teams />} />} />
-        <Route path="/teams/searched/:teamid" exact render={() => <Admin children={<Teams />} />} />
+        <Route path="/teams/searched/member/:userid/:page" exact render={() => <Admin children={<Teams />} />} />
         {/* <Route path="/teams/:agId" exact render={() => <Admin children={<Teams />} />} /> */}
         <Route path='/team/:id' exact render={()=><Admin children={<EditTeamModal/>}/>}></Route>
         <Route path='/houses/of/:userid/:username/:page' exact render={()=><Admin children={<House/>}/>}></Route>

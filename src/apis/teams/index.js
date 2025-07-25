@@ -6,6 +6,8 @@ import { GET_MANAGER_TEAM } from "apis/apiurls"
 import { GET_GIE_TEAMS_NAMES } from "apis/apiurls"
 import { GET_ALL_GIE_TEAMS_LENGTH } from "apis/apiurls"
 import { GET_RECENT_TEAMS } from "apis/apiurls"
+import { GET_TEAM_LENGTH_BY_MEMBER } from "apis/apiurls"
+import { GET_TEAM_BY_MEMBER } from "apis/apiurls"
 import { GET_ALL_AGENCY_TEAMS_LENGTH } from "apis/apiurls"
 import { GET_AGENCY_TEAMS_NAMES } from "apis/apiurls"
 import { GET_ALL_GIE_TEAMS } from "apis/apiurls"
@@ -153,5 +155,25 @@ export const getRecentTeamsforAgency = async(id)=>{
         return response
     } catch (error) {
         console.log('error in get recent teams for agency',error)
+    }
+}
+export const getTeamsByUserId = async(userid,page)=>{
+    try {
+        const path = GET_TEAM_BY_MEMBER+userid+`/${page}`
+        const response = await getAPI(path,true)
+        console.log('response from get teams by user id ',response)
+        return response
+    } catch (error) {
+        console.log('errors inn get teams by user id ',error)
+    }
+}
+export const getTeamlengthByUserid = async (userid)=>{
+    try {
+        const path = GET_TEAM_LENGTH_BY_MEMBER+userid
+        const response = await getAPI(path,true)
+        console.log('response from get team length by user id',response)
+        return response
+    } catch (error) {
+        console.log('error in get team length by user id',error)
     }
 }

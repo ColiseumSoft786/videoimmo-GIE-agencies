@@ -31,10 +31,14 @@ import { getTeamByManagerId } from "apis/teams";
 import ConfirmModal from "views/Modals/ConfirmModal";
 import { getAllGieTeamsNames } from "apis/teams";
 import { getAllAgencyTeamsNames } from "apis/teams";
+import { getTeamsByUserId } from "apis/teams";
+import { getTeamlengthByUserid } from "apis/teams";
+import { getAllGieUsernames } from "apis/users";
+import { getAllUsersNamesByAgency } from "apis/users";
 const Teams = () => {
   const color = "light";
   const location = useLocation();
-  const { agId, page, teamid } = useParams();
+  const { agId, page, userid } = useParams();
   const history = useHistory();
   const isGie = useSelector((state) => state.login.isGie);
   const isAgency = useSelector((state) => state.login.isAgency);
@@ -57,22 +61,26 @@ const Teams = () => {
   const [listitemstoshow, setlistitemstoshow] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
   const handlegetlistitems = async () => {
-    setIsFetching(true);
-    let items = [];
-    if (isGie) {
-      items = await getAllGieTeamsNames(gieId);
-    }
-    if (isAgency) {
-      items = await getAllAgencyTeamsNames(agencyId);
-    }
-    if (!items.error) {
-      setlistitems(items.data);
-      setlistitemstoshow(items.data);
-      setIsFetching(false);
-    }
-  };
+      setIsFetching(true);
+      let items = [];
+      if (isGie) {
+        items = await getAllGieUsernames(gieId);
+      }
+      if (isAgency) {
+        items = await getAllUsersNamesByAgency(agencyId);
+      }
+      if (!items.error) {
+        setlistitems(items.data);
+        setlistitemstoshow(items.data);
+        setIsFetching(false);
+      }
+    };
   const getpages = async () => {
     let pages = null;
+    const issearched = window.location.pathname.includes('searched')
+    if(issearched&&userid){
+      pages = await getTeamlengthByUserid(userid)
+    }else{
     if (isGie) {
       if (agId) {
         pages = await getAllTeamsLengthByAgency(agId);
@@ -82,7 +90,7 @@ const Teams = () => {
     }
     if (isAgency) {
       pages = await getAllTeamsLengthByAgency(agencyId);
-    }
+    }}
     if (!pages?.error) {
       settotalitems(Number(pages?.data));
       settotalpages(Math.ceil(pages?.data / 20));
@@ -94,6 +102,10 @@ const Teams = () => {
   const handleprev = () => {
     if (currentpage > 1) {
       const prev = currentpage - 1;
+      const issearched = window.location.pathname.includes('searched')
+      if(issearched&userid){
+        history.push(`/teams/searched/member/${userid}/${prev}`)
+      }else{
       if (isGie) {
         if (agId) {
           history.push(`/teams/agency/${selectedAgency}/${prev}`);
@@ -103,12 +115,16 @@ const Teams = () => {
       }
       if (isAgency) {
         history.push(`/teams/${prev}`);
-      }
+      }}
     }
   };
   const handlenext = () => {
     if (currentpage < totalpages) {
       const next = currentpage + 1;
+      const issearched = window.location.pathname.includes('searched')
+      if(issearched&&userid){
+        history.push(`/teams/searched/member/${userid}/${next}`)
+      }else{
       if (isGie) {
         if (agId) {
           history.push(`/teams/agency/${selectedAgency}/${next}`);
@@ -118,7 +134,7 @@ const Teams = () => {
       }
       if (isAgency) {
         history.push(`/teams/${next}`);
-      }
+      }}
     }
   };
   useEffect(() => {
@@ -152,10 +168,10 @@ const Teams = () => {
           setisloading(false);
         }
       }
-      if (issearched) {
-        response = await getTeamByManagerId(teamid);
+      if (issearched&&userid) {
+        response = await getTeamsByUserId(userid,page);
         if (!response.error) {
-          setAllTeams([response.data.data]);
+          setAllTeams(response.data.data);
           setisloading(false);
         }
       }
@@ -200,13 +216,13 @@ const Teams = () => {
     }
   };
   const handlesuggestionclick = (id) => {
-    history.push(`/teams/searched/${id}`);
+    history.push(`/teams/searched/member/${id}/1`);
     setSearchText("");
   };
   useEffect(() => {
     setlistitemstoshow(
       listitems.filter((item) =>
-        item.name.toLowerCase().includes(searchText.toLowerCase())
+        item.fname.toLowerCase().includes(searchText.toLowerCase())
       )
     );
   }, [searchText]);
@@ -262,9 +278,7 @@ const Teams = () => {
                               }}
                               key={index}
                             >
-                              {window.location.pathname.includes("users")
-                                ? item.fname
-                                : item.name}
+                              {item.fname}
                             </div>
                           );
                         })}
@@ -449,7 +463,7 @@ const Teams = () => {
                           </td>
                           {isGie && (
                             <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                              {team.agency.name}
+                              {team.agency?.name}
                             </td>
                           )}
                           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-right">
@@ -461,7 +475,7 @@ const Teams = () => {
                                 history.push(`/team/${team._id}`);
                               }}
                               handleview={() => {
-                                history.push(`/teams/${team._id}`);
+                                history.push(`/team/${team._id}`);
                               }}
                               handledelete={() => handledeleteclick(team._id)}
                             />
@@ -475,8 +489,7 @@ const Teams = () => {
             )}
           </div>
           {!isloading &&
-            totalitems > 20 &&
-            !window.location.pathname.includes("searched") && (
+            totalitems > 20 && (
               <div
                 style={{
                   display: "flex",

@@ -46,3 +46,5 @@ export const GET_GIE_TOKENS_TRANSACTION = process.env.REACT_APP_ENDPOINT + 'toke
 export const GET_RECENT_USERS = process.env.REACT_APP_ENDPOINT + 'user/recentusers/'
 export const GET_RECENT_TEAMS = process.env.REACT_APP_ENDPOINT + 'user/recentteams/'
 export const GET_RECENT_AGENCIES = process.env.REACT_APP_ENDPOINT + 'agency/recentagencies/'
+export const GET_TEAM_BY_MEMBER = process.env.REACT_APP_ENDPOINT + 'user/getteams/byagencymember/'
+export const GET_TEAM_LENGTH_BY_MEMBER = process.env.REACT_APP_ENDPOINT + 'user/getteams/byagencymember/length/'
