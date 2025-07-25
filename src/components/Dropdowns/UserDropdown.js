@@ -43,7 +43,7 @@ const UserDropdown = () => {
               overflow: "hidden",
             }}
           >
-            <img alt="image" src={`https://api.videorpi.com/${agencyimage}`} />
+            <img alt="image" style={{height:'100%',width:'100%',objectFit:'cover'}} src={`https://api.videorpi.com/${agencyimage}`} />
           </div>
         ) : (
           <div className="items-center flex">

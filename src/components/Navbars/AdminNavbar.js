@@ -24,62 +24,62 @@ export default function Navbar() {
     : localStorage.getItem("parent_gie");
   const agencyId = isAgency ? localStorage.getItem("agency_id") : "";
   const [userName, setUserName] = useState("");
-  const [searchText,setSearchText] = useState('');
-  const [listitems,setlistitems] = useState([])
-  const [listitemstoshow,setlistitemstoshow] = useState([])
+  // const [searchText,setSearchText] = useState('');
+  // const [listitems,setlistitems] = useState([])
+  // const [listitemstoshow,setlistitemstoshow] = useState([])
   useEffect(() => {
     setUserName(giename ? giename : agencyname);
   }, [giename, agencyname]);
-  useEffect(()=>{
-    if(expiry>=new Date){
-      setisexpired(true)
-    }
-  },[])
-   const handlegetlistitems = async()=>{
-    let items = []
-    if(window.location.pathname.includes('users')&&isGie){
-      items = await getAllGieUsernames(gieId)
-    }
-    if(window.location.pathname.includes('users')&&isAgency){
-      items = await getAllUsersNamesByAgency(agencyId)
-    }
-    if(window.location.pathname.includes('teams')&&isGie){
-      items = await getAllGieTeamsNames(gieId)
-    }
-    if(window.location.pathname.includes('teams')&&isAgency){
-      items = await getAllAgencyTeamsNames(agencyId)
-    }
-    if(window.location.pathname.includes('agencies')&&isGie){
-      items = await getAllAgenciesNames(gieId)
-    }
-    if(!items.error){
-      setlistitems(items.data)
-      setlistitemstoshow(items.data)
-    }
-  }
-  useEffect(()=>{
-    handlegetlistitems()
-    setSearchText('')
-  },[location,isGie,isAgency])
-  useEffect(()=>{
-    if(window.location.pathname.includes('users')){
-      setlistitemstoshow(listitems.filter((item)=>item.fname.toLowerCase().includes(searchText.toLowerCase())))
-    }else{
-      setlistitemstoshow(listitems.filter((item)=>item.name.toLowerCase().includes(searchText.toLowerCase())))
-    }
-  },[searchText])
-  const handlesuggestionclick = (id)=>{
-    if(window.location.pathname.includes('users')){
-      history.push(`/users/searched/${id}`)
-    }
-    if(window.location.pathname.includes('agencies')){
-      history.push(`/agencies/searched/${id}`)
-    }
-    if(window.location.pathname.includes('teams')){
-      history.push(`/teams/searched/${id}`)
-    }
-    setSearchText('')
-  }
+  // useEffect(()=>{
+  //   if(expiry>=new Date){
+  //     setisexpired(true)
+  //   }
+  // },[])
+  //  const handlegetlistitems = async()=>{
+  //   let items = []
+  //   if(window.location.pathname.includes('users')&&isGie){
+  //     items = await getAllGieUsernames(gieId)
+  //   }
+  //   if(window.location.pathname.includes('users')&&isAgency){
+  //     items = await getAllUsersNamesByAgency(agencyId)
+  //   }
+  //   if(window.location.pathname.includes('teams')&&isGie){
+  //     items = await getAllGieTeamsNames(gieId)
+  //   }
+  //   if(window.location.pathname.includes('teams')&&isAgency){
+  //     items = await getAllAgencyTeamsNames(agencyId)
+  //   }
+  //   if(window.location.pathname.includes('agencies')&&isGie){
+  //     items = await getAllAgenciesNames(gieId)
+  //   }
+  //   if(!items.error){
+  //     setlistitems(items.data)
+  //     setlistitemstoshow(items.data)
+  //   }
+  // }
+  // useEffect(()=>{
+  //   handlegetlistitems()
+  //   setSearchText('')
+  // },[location,isGie,isAgency])
+  // useEffect(()=>{
+  //   if(window.location.pathname.includes('users')){
+  //     setlistitemstoshow(listitems.filter((item)=>item.fname.toLowerCase().includes(searchText.toLowerCase())))
+  //   }else{
+  //     setlistitemstoshow(listitems.filter((item)=>item.name.toLowerCase().includes(searchText.toLowerCase())))
+  //   }
+  // },[searchText])
+  // const handlesuggestionclick = (id)=>{
+  //   if(window.location.pathname.includes('users')){
+  //     history.push(`/users/searched/${id}`)
+  //   }
+  //   if(window.location.pathname.includes('agencies')){
+  //     history.push(`/agencies/searched/${id}`)
+  //   }
+  //   if(window.location.pathname.includes('teams')){
+  //     history.push(`/teams/searched/${id}`)
+  //   }
+  //   setSearchText('')
+  // }
   return (
     <>
       {/* Navbar */}
@@ -95,7 +95,7 @@ export default function Navbar() {
             </a>
           )}
           {/* Form */}
-          {!window.location.pathname.includes("houses") &&
+          {/* {!window.location.pathname.includes("houses") &&
             !window.location.pathname.includes("settings") &&
             !window.location.pathname.includes("dashboard") && (
               <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
@@ -119,7 +119,7 @@ export default function Navbar() {
               </div>}
                 </div>
               </form>
-            )}
+            )} */}
           {/* User */}
           <ul className="flex-col md:flex-row list-none items-center hidden md:flex">
             <UserDropdown />

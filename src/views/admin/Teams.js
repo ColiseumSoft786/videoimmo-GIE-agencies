@@ -29,6 +29,8 @@ import { getAllTeamsLengthByAgency } from "apis/dashboard";
 import { getAllTeamsLengthByGie } from "apis/dashboard";
 import { getTeamByManagerId } from "apis/teams";
 import ConfirmModal from "views/Modals/ConfirmModal";
+import { getAllGieTeamsNames } from "apis/teams";
+import { getAllAgencyTeamsNames } from "apis/teams";
 const Teams = () => {
   const color = "light";
   const location = useLocation();
@@ -48,8 +50,27 @@ const Teams = () => {
   const [currentpage, setcurrentpage] = useState(Number(page));
   const [totalpages, settotalpages] = useState(0);
   const [totalitems, settotalitems] = useState(0);
-  const [isconfirm,setisconfirm] = useState(false)
-  const [deleteid,setdeleteid] = useState('')
+  const [isconfirm, setisconfirm] = useState(false);
+  const [deleteid, setdeleteid] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [listitems, setlistitems] = useState([]);
+  const [listitemstoshow, setlistitemstoshow] = useState([]);
+  const [isFetching, setIsFetching] = useState(true);
+  const handlegetlistitems = async () => {
+    setIsFetching(true);
+    let items = [];
+    if (isGie) {
+      items = await getAllGieTeamsNames(gieId);
+    }
+    if (isAgency) {
+      items = await getAllAgencyTeamsNames(agencyId);
+    }
+    if (!items.error) {
+      setlistitems(items.data);
+      setlistitemstoshow(items.data);
+      setIsFetching(false);
+    }
+  };
   const getpages = async () => {
     let pages = null;
     if (isGie) {
@@ -108,7 +129,7 @@ const Teams = () => {
       setisloading(true);
       let response = {};
       const issearched = window.location.pathname.includes("searched");
-      if (isGie&&!issearched) {
+      if (isGie && !issearched) {
         if (agId) {
           response = await getAllTeams(agId, page);
           if (!response.error) {
@@ -124,7 +145,7 @@ const Teams = () => {
           }
         }
       }
-      if (isAgency&&!issearched) {
+      if (isAgency && !issearched) {
         response = await getAllTeams(agencyId, page);
         if (!response.error) {
           setAllTeams(response.data);
@@ -132,12 +153,12 @@ const Teams = () => {
         }
       }
       if (issearched) {
-          response = await getTeamByManagerId(teamid);
-          if (!response.error) {
-            setAllTeams([response.data.data]);
-            setisloading(false);
-          }
+        response = await getTeamByManagerId(teamid);
+        if (!response.error) {
+          setAllTeams([response.data.data]);
+          setisloading(false);
         }
+      }
     } catch (error) {
       console.log("error in fetching teams", error);
     }
@@ -151,31 +172,44 @@ const Teams = () => {
   useEffect(() => {
     if (window.location.pathname.includes("teams")) {
       handleGetAllteams();
+      handlegetlistitems();
+      getpages();
       if (isGie) {
         handleGetAllAgencyNames();
-        if(agId){
-          setSelectedAgency(agId)
+        if (agId) {
+          setSelectedAgency(agId);
         }
       }
     }
   }, [location, isGie, isAgency]);
-  const handledeleteteam = async(id)=>{
+  const handledeleteteam = async (id) => {
     const response = await deleteTeamByAgency(id);
     if (!response.error) {
       toastService.success("Team Deleted Successfully");
       handleGetAllteams();
-      setisconfirm(false)
+      setisconfirm(false);
     }
-  }
+  };
   const handledeleteclick = (id) => {
-    setdeleteid(id)
-    setisconfirm(true)
+    setdeleteid(id);
+    setisconfirm(true);
   };
   const handlefilterclick = () => {
     if (selectedAgency.trim() !== "") {
       history.push(`/teams/filtered/${selectedAgency}/1`);
     }
   };
+  const handlesuggestionclick = (id) => {
+    history.push(`/teams/searched/${id}`);
+    setSearchText("");
+  };
+  useEffect(() => {
+    setlistitemstoshow(
+      listitems.filter((item) =>
+        item.name.toLowerCase().includes(searchText.toLowerCase())
+      )
+    );
+  }, [searchText]);
   return (
     <>
       <div className="flex flex-wrap mt-4">
@@ -188,6 +222,56 @@ const Teams = () => {
           >
             <div className="rounded-t mb-0 px-4 py-3 border-0">
               <div className="flex flex-wrap items-center">
+                <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto">
+                  <div
+                    style={{ margin: "10px" }}
+                    className="relative flex w-full flex-wrap items-stretch"
+                  >
+                    <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
+                      <i className="fas fa-search"></i>
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="Search User"
+                      value={searchText}
+                      disabled={isFetching}
+                      onChange={(e) => setSearchText(e.target.value)}
+                      className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"
+                    />
+                    {searchText.trim() !== "" && (
+                      <div
+                        style={{
+                          backgroundColor: "white",
+                          position: "absolute",
+                          top: "50px",
+                          left: "0",
+                          width: "315px",
+                          maxHeight: "40vw",
+                          overflowY: "scroll",
+                          zIndex: 50,
+                        }}
+                      >
+                        {listitemstoshow.map((item, index) => {
+                          return (
+                            <div
+                              onClick={() => handlesuggestionclick(item._id)}
+                              style={{
+                                padding: "10px",
+                                textAlign: "left",
+                                cursor: "pointer",
+                              }}
+                              key={index}
+                            >
+                              {window.location.pathname.includes("users")
+                                ? item.fname
+                                : item.name}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </form>
                 <div className="relative w-full px-4 max-w-full flex justify-between">
                   <h3
                     className={
@@ -428,7 +512,7 @@ const Teams = () => {
             )}
         </div>
       </div>
-      {(isadding||isconfirm) && (
+      {(isadding || isconfirm) && (
         <div
           style={{
             height: "100vh",
@@ -451,10 +535,10 @@ const Teams = () => {
               handlefetch={handleGetAllteams}
             />
           )}
-          {isconfirm&&(
+          {isconfirm && (
             <ConfirmModal
-             handleClose={()=>setisconfirm(false)}
-             handleAction={()=>handledeleteteam(deleteid)}
+              handleClose={() => setisconfirm(false)}
+              handleAction={() => handledeleteteam(deleteid)}
             />
           )}
         </div>

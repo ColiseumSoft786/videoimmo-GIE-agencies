@@ -5,6 +5,9 @@ import PhoneInput from "react-phone-input-2";
 import toastService from "utils/Toaster/toaster";
 
 const ViewHouseModal = ({ handleClose, Housetoview }) => {
+  const getHouseTimestamp = (createdAt) => {
+    return new Date(createdAt).getTime(); // or .valueOf()
+  };
   return (
     <div>
       <div className="flex content-center items-center justify-center h-full">
@@ -121,7 +124,9 @@ const ViewHouseModal = ({ handleClose, Housetoview }) => {
                     className="h-full w-[30%] content-center items-center "
                     style={{ paddingTop: "5%" }}
                   >
-                    <QRCodeSVG value={`hello world`} size={200} />
+                    <QRCodeSVG value={`https://web.videorpi.com/v/${getHouseTimestamp(
+                                Housetoview.createdAt
+                              )}`} size={200} />
                   </div>
                 </div>
                 <div className="text-center mt-6">

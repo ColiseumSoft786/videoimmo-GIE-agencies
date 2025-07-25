@@ -166,16 +166,16 @@ export default function CardSettings() {
             {isAgency&&(<><h6 className="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
               Agency Image
             </h6>
-            <div className="flex flex-col gap-6" style={{width:'20vw',gap:'20px'}}>
+            <div className="flex flex-col gap-6" style={{width:'15vw',gap:'20px'}}>
               {agencyimage&&agencyimage!==''?(
                 <div>
-                <div style={{height:'20vw',width:'20vw',overflow:'hidden',borderRadius:'50%'}}>
-                    <img alt="Agency Image" style={{height:'100%',width:'100%'}} src={`https://api.videorpi.com/${agencyimage}`}/>
+                <div style={{height:'15vw',width:'15vw',overflow:'hidden',borderRadius:'50%'}}>
+                    <img alt="Agency Image" style={{height:'100%',width:'100%',objectFit:'cover'}} src={`https://api.videorpi.com/${agencyimage}`}/>
                 </div>
               </div>
               ):(
                 <div className="items-center flex">
-          <span style={{height:'20vw',width:'20vw',fontSize:'15vw'}} className=" text-white bg-red-400 inline-flex items-center justify-center rounded-full">
+          <span style={{height:'15vw',width:'15vw',fontSize:'10vw'}} className=" text-white bg-red-400 inline-flex items-center justify-center rounded-full">
             <i class="fas fa-user"></i>
           </span>
         </div>

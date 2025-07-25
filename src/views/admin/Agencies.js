@@ -10,100 +10,132 @@ import ViewAgencyModal from "views/Modals/ViewAgencyModal";
 import { useSelector } from "react-redux";
 import { getAllAgenciesLengthByGie } from "apis/dashboard";
 import { getsingleagency } from "apis/agency";
-import { useHistory, useLocation, useParams } from "react-router-dom/cjs/react-router-dom.min";
+import {
+  useHistory,
+  useLocation,
+  useParams,
+} from "react-router-dom/cjs/react-router-dom.min";
 import ConfirmModal from "views/Modals/ConfirmModal";
+import { getAllAgenciesNames } from "apis/agency";
 const Agencies = () => {
   const color = "light";
-  const {page,agid} = useParams()
-  const location = useLocation()
-  console.log(page)
-  const history = useHistory()
+  const { page, agid } = useParams();
+  const location = useLocation();
+  console.log(page);
+  const history = useHistory();
   const [isadding, setisadding] = useState(false);
   const [isloading, setisloading] = useState(true);
   const [allAgencies, setAllAgencies] = useState([]);
-  const [agencytoview,setagencytoview] = useState(null)
+  const [agencytoview, setagencytoview] = useState(null);
   const [isediting, setisediting] = useState(false);
   const [isviewing, setisviewing] = useState(false);
-  const [isconfirm ,setisconfirm] = useState(false)
-  const [deleteid,setdeleteid] = useState('')
+  const [isconfirm, setisconfirm] = useState(false);
+  const [deleteid, setdeleteid] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [listitems, setlistitems] = useState([]);
+  const [listitemstoshow, setlistitemstoshow] = useState([]);
+  const [isFetching, setIsFetching] = useState(true);
   const isGie = useSelector((state) => state.login.isGie);
-    const isAgency = useSelector((state) => state.login.isAgency);
+  const isAgency = useSelector((state) => state.login.isAgency);
   const GieId = localStorage.getItem("gie_id");
-       const [currentpage,setcurrentpage] = useState(Number(page))
-       const [totalpages,settotalpages] = useState(0)
-      const [totalitems,settotalitems] = useState(0)
-      const getpages = async()=>{
-        let pages = null
-        if (isGie) {
-            pages = await getAllAgenciesLengthByGie(GieId)
-            }
-        if(!pages?.error){
-          settotalitems(Number(pages?.data))
-          settotalpages(Math.ceil(pages?.data/20))
-        }else{
-          settotalitems(0)
-          settotalpages(1)
-        }
-      }
-      const handleprev=()=>{
-        if(currentpage>1){
-          const prev = currentpage-1
-              history.push(`/agencies/${prev}`)
-        }
-      }
-      const handlenext=()=>{
-        if(currentpage<totalpages){
-          const next = currentpage+1
-              history.push(`/agencies/${next}`)
-        }
-      }
-      useEffect(()=>{
-        setcurrentpage(Number(page))
-      },[page])
+  const [currentpage, setcurrentpage] = useState(Number(page));
+  const [totalpages, settotalpages] = useState(0);
+  const [totalitems, settotalitems] = useState(0);
+  const handlegetlistitems = async () => {
+    setIsFetching(true);
+    const items = await getAllAgenciesNames(GieId);
+    if (!items.error) {
+      setlistitems(items.data);
+      setlistitemstoshow(items.data);
+      setIsFetching(false);
+    }
+  };
+  const getpages = async () => {
+    let pages = null;
+    if (isGie) {
+      pages = await getAllAgenciesLengthByGie(GieId);
+    }
+    if (!pages?.error) {
+      settotalitems(Number(pages?.data));
+      settotalpages(Math.ceil(pages?.data / 20));
+    } else {
+      settotalitems(0);
+      settotalpages(1);
+    }
+  };
+  const handleprev = () => {
+    if (currentpage > 1) {
+      const prev = currentpage - 1;
+      history.push(`/agencies/${prev}`);
+    }
+  };
+  const handlenext = () => {
+    if (currentpage < totalpages) {
+      const next = currentpage + 1;
+      history.push(`/agencies/${next}`);
+    }
+  };
+  useEffect(() => {
+    setcurrentpage(Number(page));
+  }, [page]);
   console.log(GieId);
   const handleGetAllAgencies = async () => {
     setisloading(true);
     if (GieId) {
       console.log("this gie id going for agencies", GieId);
-      const issearched = window.location.pathname.includes('searched')
-      let response = {}
-      if(issearched){
-        console.log('agency to fetch ',agid)
-        response = await getsingleagency(agid)
-      }else{
-      response = await getAllAgencies(GieId,page);}
+      const issearched = window.location.pathname.includes("searched");
+      let response = {};
+      if (issearched) {
+        console.log("agency to fetch ", agid);
+        response = await getsingleagency(agid);
+      } else {
+        response = await getAllAgencies(GieId, page);
+      }
       if (!response.error) {
-        if(issearched){
-          setAllAgencies([response.data])
-        }else{
-        setAllAgencies(response.data);}
+        if (issearched) {
+          setAllAgencies([response.data]);
+        } else {
+          setAllAgencies(response.data);
+        }
         setisloading(false);
       }
     }
   };
   useEffect(() => {
     handleGetAllAgencies();
-    getpages()
-  }, [location,isGie,isAgency]);
+    handlegetlistitems();
+    getpages();
+  }, [location, isGie, isAgency]);
   const handleeditclick = async (agency) => {
-    setagencytoview(agency)
+    setagencytoview(agency);
     setisediting(true);
   };
-  const handleviewclick = async(agency) => {
-    setagencytoview(agency)
+  const handleviewclick = async (agency) => {
+    setagencytoview(agency);
     setisviewing(true);
   };
-  const handledeleteagency = async(id)=>{
-    const response = await deleteAgency(id)
-    if(!response.error){
-      toastService.success("Agency Deleted Successfully")
-      handleGetAllAgencies()
-      setisconfirm(false)
+  const handledeleteagency = async (id) => {
+    const response = await deleteAgency(id);
+    if (!response.error) {
+      toastService.success("Agency Deleted Successfully");
+      handleGetAllAgencies();
+      setisconfirm(false);
     }
-  }
+  };
   const handledeleteclick = (id) => {
-    setdeleteid(id)
-    setisconfirm(true)
+    setdeleteid(id);
+    setisconfirm(true);
+  };
+  useEffect(() => {
+    setlistitemstoshow(
+      listitems.filter((item) =>
+        item.name.toLowerCase().includes(searchText.toLowerCase())
+      )
+    );
+  }, [searchText]);
+  const handlesuggestionclick = (id) => {
+    history.push(`/agencies/searched/${id}`);
+    setSearchText("");
   };
   return (
     <>
@@ -117,6 +149,56 @@ const Agencies = () => {
           >
             <div className="rounded-t mb-0 px-4 py-3 border-0">
               <div className="flex flex-wrap items-center">
+                <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto">
+                  <div
+                    style={{ margin: "10px" }}
+                    className="relative flex w-full flex-wrap items-stretch"
+                  >
+                    <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
+                      <i className="fas fa-search"></i>
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="Search User"
+                      value={searchText}
+                      disabled={isFetching}
+                      onChange={(e) => setSearchText(e.target.value)}
+                      className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative  bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"
+                    />
+                    {searchText.trim() !== "" && (
+                      <div
+                        style={{
+                          backgroundColor: "white",
+                          position: "absolute",
+                          top: "50px",
+                          left: "0",
+                          width: "315px",
+                          maxHeight: "40vw",
+                          overflowY: "scroll",
+                          zIndex: 50,
+                        }}
+                      >
+                        {listitemstoshow.map((item, index) => {
+                          return (
+                            <div
+                              onClick={() => handlesuggestionclick(item._id)}
+                              style={{
+                                padding: "10px",
+                                textAlign: "left",
+                                cursor: "pointer",
+                              }}
+                              key={index}
+                            >
+                              {window.location.pathname.includes("users")
+                                ? item.fname
+                                : item.name}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </form>
                 <div className="relative w-full px-4 max-w-full flex justify-between">
                   <h3
                     className={
@@ -221,7 +303,7 @@ const Agencies = () => {
                             ) : (
                               <img
                                 src={`https://api.videorpi.com/${agency.image}`}
-                                style={{ height: "25px", width: "25px" }}
+                                style={{ height: "25px", width: "25px" ,objectFit:'cover'}}
                                 className=" bg-white rounded-full border"
                                 alt="..."
                               ></img>
@@ -239,9 +321,9 @@ const Agencies = () => {
                               isedit={true}
                               isview={true}
                               isdelete={true}
-                              handleedit={()=>handleeditclick(agency)}
-                              handleview={()=>handleviewclick(agency)}
-                              handledelete={()=>handledeleteclick(agency._id)}
+                              handleedit={() => handleeditclick(agency)}
+                              handleview={() => handleviewclick(agency)}
+                              handledelete={() => handledeleteclick(agency._id)}
                             />
                           </td>
                         </tr>
@@ -290,7 +372,7 @@ const Agencies = () => {
             )}
         </div>
       </div>
-      {(isadding||isediting||isviewing||isconfirm) && (
+      {(isadding || isediting || isviewing || isconfirm) && (
         <div
           style={{
             height: "100vh",
@@ -314,21 +396,21 @@ const Agencies = () => {
           )}
           {isediting && (
             <EditAgencyModal
-            handleClose={()=>setisediting(false)}
-            agencytoview={agencytoview} 
-            handlefetch={handleGetAllAgencies}
+              handleClose={() => setisediting(false)}
+              agencytoview={agencytoview}
+              handlefetch={handleGetAllAgencies}
             />
           )}
           {isviewing && (
             <ViewAgencyModal
-            handleClose={()=>setisviewing(false)}
-            agencytoview={agencytoview}
+              handleClose={() => setisviewing(false)}
+              agencytoview={agencytoview}
             />
           )}
           {isconfirm && (
             <ConfirmModal
-            handleClose={()=>setisconfirm(false)}
-            handleAction = {()=>handledeleteagency(deleteid)}
+              handleClose={() => setisconfirm(false)}
+              handleAction={() => handledeleteagency(deleteid)}
             />
           )}
         </div>
