@@ -131,14 +131,14 @@ export default function Login() {
                       </label>
                       <div className="px-6 mb-6">
                         {/* add your code here */}
-                        <div className="flex flex-wrap gap-4">
+                        <div className="flex gap-4">
                           {[
                             {
                               label: "Agency",
                               value: "agency",
                               icon: (
                                 <svg
-                                  className="w-8 h-8 text-blue-500"
+                                  className="w-8 h-8 text-gray-700"
                                   fill="currentColor"
                                   viewBox="0 0 20 20"
                                 >
@@ -151,7 +151,7 @@ export default function Login() {
                               value: "gie",
                               icon: (
                                 <svg
-                                  className="w-8 h-8 text-green-500"
+                                  className="w-8 h-8 text-gray-700"
                                   fill="currentColor"
                                   viewBox="0 0 20 20"
                                 >

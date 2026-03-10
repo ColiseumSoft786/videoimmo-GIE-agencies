@@ -15,7 +15,7 @@ import { GET_ALL_AGENCY_USERS } from "apis/apiurls"
 
 export const getAllUsersByAgencyId = async(id,page)=>{
     try {
-        const path = GET_ALL_AGENCY_USERS+id+`/${page}`
+        const path = GET_ALL_AGENCY_USERS+id+`/${page}/-1`
         const response = await getAPI(path,true)
         console.log('response from get user by agency id',response)
         return response
@@ -25,7 +25,7 @@ export const getAllUsersByAgencyId = async(id,page)=>{
 }
 export const getAllUserByGieId = async(id,page)=>{
     try {
-        const path = GET_ALL_GIE_USERS+id+`/${page}`
+        const path = GET_ALL_GIE_USERS+id+`/${page}/-1`
         const response = await getAPI(path,true)
         console.log("response from get all user by gie id ",response)
         return response
